@@ -11,8 +11,7 @@
     "run_worker_first": true
   },
   "kv_namespaces": [
-    // Replace with the ID from `wrangler kv namespace create STATUS` before the first deploy.
-    { "binding": "STATUS", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
+    { "binding": "STATUS", "id": "a21d9cc78e7e446ab8de7560a52ac0cf" }
   ],
   "vars": {
     // Filled in during Access setup (README): your team domain and the Access application's AUD tag.

@@ -83,6 +83,11 @@ describe('who can see the page', () => {
     expect(res.headers.get('Content-Security-Policy')).toContain("default-src 'self'");
   });
 
+  it('before secrets are set, a request with no login is refused cleanly (not a crash)', async () => {
+    env.VIEWERS = undefined as unknown as string;
+    expect((await call('/')).status).toBe(403);
+  });
+
   it('robots.txt disallows everything, no login needed', async () => {
     const res = await call('/robots.txt');
     expect(await res.text()).toBe('User-agent: *\nDisallow: /\n');

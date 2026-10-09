@@ -98,9 +98,10 @@ export default {
     if (path === '/api/update') return handleUpdate(request, env, who);
 
     // Everything else is for people on the viewer list only.
+    if (!who?.email) return forbidden();
     const config = JSON.parse(env.VIEWERS) as ViewerConfig;
     const viewers = Object.fromEntries(Object.entries(config.viewers).map(([email, v]) => [email.toLowerCase(), v]));
-    const viewer = who?.email ? viewers[who.email] : undefined;
+    const viewer = viewers[who.email];
     if (!viewer) return forbidden();
 
     if (path === '/api/status') {
