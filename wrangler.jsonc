@@ -1,0 +1,22 @@
+{
+  // Where's Lange? Worker. Secrets (VIEWERS, UPDATE_SECRET) are set with `wrangler secret put`,
+  // never written here. For local dev they come from .dev.vars (see .dev.vars.example).
+  "name": "wheres-lange",
+  "main": "worker/src/index.ts",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "public",
+    "binding": "ASSETS",
+    // Run the Worker before serving any file, so every page and file requires a signed-in viewer.
+    "run_worker_first": true
+  },
+  "kv_namespaces": [
+    // Replace with the ID from `wrangler kv namespace create STATUS` before the first deploy.
+    { "binding": "STATUS", "id": "REPLACE_WITH_KV_NAMESPACE_ID" }
+  ],
+  "vars": {
+    // Filled in during Access setup (README): your team domain and the Access application's AUD tag.
+    "ACCESS_TEAM_DOMAIN": "",
+    "ACCESS_AUD": ""
+  }
+}

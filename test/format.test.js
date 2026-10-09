@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const F = require('../web/format.js');
+const F = require('../public/format.js');
 const status = require('./fixtures/status-2026-10-07.json');
 const { config } = require('./fixtures/fall-2026.json');
 

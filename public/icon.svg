@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6fb7ee"/>
+      <stop offset="1" stop-color="#e8f4fb"/>
+    </linearGradient>
+    <mask id="perf">
+      <rect x="0" y="0" width="512" height="512" fill="#fff"/>
+      <g fill="#000">
+        <circle cx="146" cy="136" r="11"/><circle cx="186" cy="136" r="11"/><circle cx="226" cy="136" r="11"/><circle cx="266" cy="136" r="11"/><circle cx="306" cy="136" r="11"/><circle cx="346" cy="136" r="11"/>
+        <circle cx="146" cy="376" r="11"/><circle cx="186" cy="376" r="11"/><circle cx="226" cy="376" r="11"/><circle cx="266" cy="376" r="11"/><circle cx="306" cy="376" r="11"/><circle cx="346" cy="376" r="11"/>
+        <circle cx="126" cy="156" r="11"/><circle cx="126" cy="196" r="11"/><circle cx="126" cy="236" r="11"/><circle cx="126" cy="276" r="11"/><circle cx="126" cy="316" r="11"/><circle cx="126" cy="356" r="11"/>
+        <circle cx="366" cy="156" r="11"/><circle cx="366" cy="196" r="11"/><circle cx="366" cy="236" r="11"/><circle cx="366" cy="276" r="11"/><circle cx="366" cy="316" r="11"/><circle cx="366" cy="356" r="11"/>
+      </g>
+    </mask>
+  </defs>
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <circle cx="404" cy="104" r="52" fill="#ffd76a"/>
+  <g transform="rotate(-6 256 256)">
+    <rect x="126" y="136" width="240" height="240" fill="#24303d" mask="url(#perf)"/>
+    <rect x="150" y="160" width="192" height="192" fill="none" stroke="#fbf7ef" stroke-width="4" opacity=".5"/>
+    <path d="M178 266 L330 196 L296 318 L262 284 L238 314 L236 272 Z M236 272 L330 196" fill="#fbf7ef" stroke="#fbf7ef" stroke-width="6" stroke-linejoin="round"/>
+  </g>
+</svg>

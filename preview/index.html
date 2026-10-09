@@ -70,7 +70,7 @@
   function update() {
     for (const f of figures) {
       const q = new URLSearchParams({ scenario: f.querySelector('select').value, viewer: $('viewer').value, theme: $('theme').value });
-      f.querySelector('iframe').src = `lange.html?${q}`;
+      f.querySelector("iframe").src = `lange.html?${q}`;
     }
   }
   $('preset').addEventListener('change', () => {

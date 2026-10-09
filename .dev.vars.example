@@ -1,0 +1,5 @@
+# Copy to .dev.vars (gitignored) for `npm run dev`. Local only: none of this is used when deployed.
+# Who you are when browsing http://localhost:8787 (must be one of the emails in VIEWERS):
+DEV_USER_EMAIL=mom@example.com
+UPDATE_SECRET=local-dev-secret
+VIEWERS={"home":{"city":"San Francisco","region":"CA"},"phone":"+15555550123","viewers":{"mom@example.com":{"name":"Mary","metro":"stockton"},"dad@example.com":{"name":"Ruperto","metro":"stockton"},"friend@example.com":{"name":"Jason","metro":null}},"metros":{"stockton":{"label":"Near Mom & Dad"},"la":{"label":"Your city"},"sacramento":{"label":"Your city"},"tucson":{"label":"Your city"},"boston":{"label":"Your city"},"nyc":{"label":"Your city"},"dc":{"label":"Your city"},"burlington":{"label":"Your city"},"seattle":{"label":"Your city"}}}
