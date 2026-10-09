@@ -1,0 +1,188 @@
+// Runs the Apps Script files the way Apps Script does (one shared global scope) against fake
+// Calendar, Gmail, UrlFetch and Properties services loaded with the fixture data.
+import { describe, it, expect } from 'vitest';
+import { createRequire } from 'node:module';
+import fs from 'node:fs';
+import vm from 'node:vm';
+
+const require = createRequire(import.meta.url);
+const core = require('../apps-script/src/core.js');
+const { CONFIG } = require('../apps-script/src/config.js');
+const fixture = require('./fixtures/fall-2026.json');
+
+const SOURCES = ['config.js', 'core.js', 'Code.js'].map((f) => fs.readFileSync(new URL(`../apps-script/src/${f}`, import.meta.url), 'utf8'));
+const NOW = Date.parse('2026-10-07T20:12:00Z');
+const DAY = 24 * 3600e3;
+const PROPS = {
+  WORKER_URL: 'https://wheres-lange.example.workers.dev/',
+  ACCESS_CLIENT_ID: 'client-id.access',
+  ACCESS_CLIENT_SECRET: 'client-secret',
+  UPDATE_SECRET: 'update-secret',
+  MARKER_CALENDAR_ID: 'markers@group.calendar.google.com',
+};
+
+// A calendar event as CalendarApp returns it. All-day dates come back as Dates at local midnight.
+function fakeEvent(e) {
+  const day = (d) => new Date(`${d}T08:00:00Z`); // midnight Pacific
+  return {
+    getTitle: () => e.title,
+    getLocation: () => e.location || '',
+    isAllDayEvent: () => e.allDay,
+    getAllDayStartDate: () => day(e.start),
+    getAllDayEndDate: () => day(e.end),
+    getStartTime: () => new Date(e.allDay ? `${e.start}T08:00:00Z` : e.start),
+    getEndTime: () => new Date(e.allDay ? `${e.end}T08:00:00Z` : e.end),
+    getEventType: () => ({ toString: () => (e.eventType === 'workingLocation' ? 'WORKING_LOCATION' : 'DEFAULT') }),
+  };
+}
+
+function fakeCalendar(events, calls) {
+  return {
+    getEvents(start, end) {
+      calls.push([start.getTime(), end.getTime()]);
+      return events.map(fakeEvent).filter((ev) => ev.getStartTime() < end && ev.getEndTime() > start);
+    },
+  };
+}
+
+/** Loads the Apps Script files into a fresh sandbox with fake Google services. */
+function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true } = {}) {
+  const isMarker = (e) => e.title.startsWith('📍');
+  const meeting = { title: 'Lunch with Sam', location: 'Some Cafe', start: '2026-10-08T19:00:00Z', end: '2026-10-08T20:00:00Z', allDay: false };
+  const calls = { getEvents: [], fetch: [], gmailGets: 0, triggers: [] };
+
+  class FixedDate extends Date {
+    constructor(...args) { if (args.length) super(...args); else super(NOW); }
+    static now() { return NOW; }
+  }
+  const messages = emails.map((e, i) => ({ id: `m${i}`, internalDate: String(Date.parse(e.date)), payload: { headers: [{ name: 'Subject', value: e.subject }] } }));
+
+  const sandbox = {
+    console: { log() {} },
+    Date: FixedDate,
+    Session: { getScriptTimeZone: () => 'America/Los_Angeles' },
+    Utilities: {
+      formatDate: (d, tz) => new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d),
+    },
+    PropertiesService: { getScriptProperties: () => ({ getProperties: () => ({ ...props }) }) },
+    CalendarApp: {
+      getDefaultCalendar: () => fakeCalendar([...fixture.events.filter((e) => !isMarker(e)), meeting], calls.getEvents),
+      getCalendarById: (id) => (markerCalendar && id === PROPS.MARKER_CALENDAR_ID ? fakeCalendar(fixture.events.filter(isMarker), calls.getEvents) : null),
+    },
+    Gmail: {
+      Users: {
+        Messages: {
+          // Two messages per page, to exercise paging.
+          list: (user, { q, pageToken }) => {
+            calls.query = q;
+            const at = Number(pageToken || 0);
+            return { messages: messages.slice(at, at + 2).map(({ id }) => ({ id })), nextPageToken: at + 2 < messages.length ? String(at + 2) : undefined };
+          },
+          get: (user, id, opts) => { calls.gmailGets++; calls.gmailFormat = opts.format; return messages.find((m) => m.id === id); },
+        },
+      },
+    },
+    UrlFetchApp: {
+      fetch: (url, opts) => {
+        calls.fetch.push({ url, opts });
+        return { getResponseCode: () => responseCode, getContentText: () => (responseCode === 200 ? '{"ok":true}' : '{"error":"forbidden"}') };
+      },
+    },
+    ScriptApp: {
+      getProjectTriggers: () => [{ getHandlerFunction: () => 'updateStatus', id: 'old' }, { getHandlerFunction: () => 'other', id: 'keep' }],
+      deleteTrigger: (t) => calls.triggers.push(`deleted ${t.id}`),
+      newTrigger: (fn) => ({ timeBased: () => ({ everyMinutes: (n) => ({ create: () => calls.triggers.push(`created ${fn} every ${n} min`) }) }) }),
+    },
+  };
+  vm.createContext(sandbox);
+  vm.runInContext(SOURCES.join('\n;\n'), sandbox);
+  return { run: (fn) => sandbox[fn](), calls, sandbox };
+}
+
+const expected = () => core.buildStatus({ config: CONFIG, events: fixture.events, emails: fixture.emails, now: NOW });
+const plain = (v) => JSON.parse(JSON.stringify(v)); // values from the sandbox's own realm
+
+describe('Apps Script wrapper', () => {
+  it('sends the same status the merge logic builds from the fixtures', () => {
+    const gas = appsScript();
+    gas.run('updateStatus');
+    expect(gas.calls.fetch).toHaveLength(1);
+    const { url, opts } = gas.calls.fetch[0];
+    expect(url).toBe('https://wheres-lange.example.workers.dev/api/update');
+    expect(JSON.parse(opts.payload)).toEqual(expected());
+    expect(opts.headers).toEqual({
+      'CF-Access-Client-Id': 'client-id.access',
+      'CF-Access-Client-Secret': 'client-secret',
+      Authorization: 'Bearer update-secret',
+    });
+    expect(opts.method).toBe('post');
+  });
+
+  it('reads 14 days back and 62 days ahead, from both calendars', () => {
+    const gas = appsScript();
+    gas.run('dryRun');
+    expect(gas.calls.getEvents).toEqual([
+      [NOW - 14 * DAY, NOW + 62 * DAY],
+      [NOW - 14 * DAY, NOW + 62 * DAY],
+    ]);
+  });
+
+  it('reads only Flight:/Stay:/📍 events — meetings never enter the status', () => {
+    const gas = appsScript();
+    const events = plain(gas.sandbox.readEvents_(gas.sandbox.CalendarApp.getDefaultCalendar(), new Date(0), new Date(NOW + 365 * DAY)));
+    expect(events.map((e) => e.title).every((t) => /^(Flight:|Stay:)/.test(t))).toBe(true);
+    expect(JSON.stringify(plain(gas.run('dryRun')))).not.toMatch(/Sam|Cafe/);
+  });
+
+  it('turns all-day events into dates and timed events into instants', () => {
+    const gas = appsScript();
+    const events = plain(gas.sandbox.readEvents_(gas.sandbox.CalendarApp.getDefaultCalendar(), new Date(0), new Date(NOW + 365 * DAY)));
+    expect(events.find((e) => e.title.startsWith('Stay: The Morrow'))).toMatchObject({ allDay: true, start: '2026-10-05', end: '2026-10-08' });
+    expect(events.find((e) => e.title.includes('UA1234'))).toMatchObject({ allDay: false, start: '2026-10-07T22:57:00.000Z', end: '2026-10-08T04:55:00.000Z' });
+  });
+
+  it('reads every page of Navan emails, headers only', () => {
+    const gas = appsScript();
+    gas.run('dryRun');
+    expect(gas.calls.query).toBe('from:no-reply@navan.com newer_than:120d');
+    expect(gas.calls.gmailGets).toBe(fixture.emails.length);
+    expect(gas.calls.gmailFormat).toBe('metadata');
+  });
+
+  it('dryRun sends nothing', () => {
+    const gas = appsScript();
+    expect(plain(gas.run('dryRun'))).toEqual(expected());
+    expect(gas.calls.fetch).toHaveLength(0);
+  });
+
+  it('fails loudly (so Apps Script emails Lange) when the Worker rejects the update', () => {
+    const gas = appsScript({ responseCode: 403 });
+    expect(() => gas.run('updateStatus')).toThrow('Worker update failed: HTTP 403');
+  });
+
+  it('refuses to send when a script property is missing', () => {
+    const { UPDATE_SECRET, ...rest } = PROPS;
+    const gas = appsScript({ props: rest });
+    expect(() => gas.run('updateStatus')).toThrow('Script property UPDATE_SECRET is not set');
+    expect(gas.calls.fetch).toHaveLength(0);
+  });
+
+  it('says so when the marker calendar is not shared', () => {
+    const gas = appsScript({ markerCalendar: false });
+    expect(() => gas.run('dryRun')).toThrow('MARKER_CALENDAR_ID');
+  });
+
+  it('works without a marker calendar yet', () => {
+    const { MARKER_CALENDAR_ID, ...rest } = PROPS;
+    const gas = appsScript({ props: rest });
+    const trips = plain(gas.run('dryRun')).trips.map((t) => t.place);
+    expect(trips).not.toContain('Stockton, CA'); // that trip only exists as a marker
+    expect(trips).toContain('Germany');
+  });
+
+  it('installTrigger replaces the old 30-minute trigger and leaves others alone', () => {
+    const gas = appsScript();
+    gas.run('installTrigger');
+    expect(gas.calls.triggers).toEqual(['deleted old', 'created updateStatus every 30 min']);
+  });
+});

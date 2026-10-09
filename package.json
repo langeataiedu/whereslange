@@ -10,12 +10,15 @@
     "dev": "WRANGLER_SEND_METRICS=false wrangler dev --ip 127.0.0.1 --port 8787",
     "post-status": "node scripts/post-status.js",
     "demo-data": "node scripts/make-demo-data.js",
-    "preview": "npm run demo-data && python3 -m http.server 8765"
+    "preview": "npm run demo-data && python3 -m http.server 8765",
+    "gas:push": "clasp push"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20261009.1",
+    "@google/clasp": "^3.4.1",
+    "@types/node": "^24.19.2",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4",
+    "vitest": "^5.0.3",
     "wrangler": "^4.149.0"
   },
   "engines": {
