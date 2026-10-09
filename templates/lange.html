@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Where's Lange?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /*
+   * "Window Seat Postcard": the sky behind the page follows the time of day where Lange is
+   * (data-sky on <html>); the cards are postcards held up against it.
+   */
+  :root {
+    --sky-top: #6fb7ee; --sky-bottom: #e8f4fb; --sun: #ffd76a;
+    --paper: rgba(255, 250, 240, .88); --paper-strong: rgba(255, 250, 240, .95);
+    --ink: #24303d; --ink-soft: #5b6672; --rule: rgba(36, 48, 61, .18);
+    /* Card details stay in ink tones; the sky supplies the color */
+    --accent: #24303d; --accent-ink: #fbf7ef; --teal: #24303d;
+    --mine: rgba(36, 48, 61, .07); --pill: rgba(36, 48, 61, .08); --star: #24303d;
+    --air-a: #24303d; --air-b: #8a9199; --title: #ffffff; --stale: #24303d;
+  }
+  :root[data-sky="dawn"]  { --sky-top: #f6b38e; --sky-bottom: #f8e3d6; --sun: #ffcf8a; }
+  :root[data-sky="dusk"]  { --sky-top: #6b5aa6; --sky-bottom: #f4a582; --sun: #ffb36b; }
+  :root[data-sky="night"] { --sky-top: #0d1b3a; --sky-bottom: #33427a; --sun: #f3efe2; }
+
+  /* Night sky and dark mode both get evening paper */
+  :root[data-sky="night"], :root[data-theme="dark"] {
+    --paper: rgba(27, 35, 50, .8); --paper-strong: rgba(27, 35, 50, .9);
+    --ink: #f2e8d6; --ink-soft: #b9b0a0; --rule: rgba(242, 232, 214, .18);
+    --accent: #f2e8d6; --accent-ink: #1b2332; --teal: #f2e8d6;
+    --mine: rgba(242, 232, 214, .08); --pill: rgba(242, 232, 214, .1); --star: #f2e8d6; --stale: #f2e8d6;
+    --air-a: #f2e8d6; --air-b: #7d7a74;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: rgba(27, 35, 50, .8); --paper-strong: rgba(27, 35, 50, .9);
+      --ink: #f2e8d6; --ink-soft: #b9b0a0; --rule: rgba(242, 232, 214, .18);
+      --accent: #f2e8d6; --accent-ink: #1b2332; --teal: #f2e8d6;
+      --mine: rgba(242, 232, 214, .08); --pill: rgba(242, 232, 214, .1); --star: #f2e8d6; --stale: #f2e8d6;
+      --air-a: #f2e8d6; --air-b: #7d7a74;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--ink);
+    font: 400 18px/1.45 "Work Sans", system-ui, sans-serif;
+    background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bottom) 70%) fixed, var(--sky-bottom);
+  }
+  body::after { /* dims the sky in dark mode */
+    content: ""; position: fixed; inset: 0; background: #050914; opacity: 0; pointer-events: none; z-index: 0;
+  }
+  :root[data-theme="dark"] body::after { opacity: .45; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) body::after { opacity: .45; } }
+
+  .sky-orb {
+    position: fixed; top: 30px; right: 26px; width: 70px; height: 70px; border-radius: 50%; z-index: 0;
+    background: var(--sun); box-shadow: 0 0 60px 18px color-mix(in srgb, var(--sun) 55%, transparent);
+  }
+  :root[data-sky="night"] .sky-orb { box-shadow: -14px 6px 0 0 var(--sky-top) inset, 0 0 40px 4px rgba(243, 239, 226, .25); }
+  .stars {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; display: none;
+    background-image: radial-gradient(1.5px 1.5px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 30% 8%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 55% 22%, #fff, transparent), radial-gradient(1px 1px at 72% 6%, #fff, transparent),
+      radial-gradient(1px 1px at 8% 40%, #fff, transparent), radial-gradient(1.5px 1.5px at 44% 34%, #fff, transparent),
+      radial-gradient(1px 1px at 88% 30%, #fff, transparent);
+  }
+  :root[data-sky="night"] .stars { display: block; }
+
+  .page { position: relative; z-index: 1; max-width: 460px; margin: 0 auto; padding: 28px 16px 40px; }
+  .title {
+    font: italic 600 32px/1.1 Fraunces, Georgia, serif; letter-spacing: -0.01em; margin: 0;
+    color: var(--title); text-shadow: 0 1px 14px rgba(0, 0, 0, .2);
+  }
+
+  /* Lange waving from behind the Today postcard (assets/lange-waving.svg, animated in the SVG itself) */
+  .avatar-slot { position: relative; width: 140px; height: 159px; margin: 4px 0 -44px 6px; }
+  .avatar-slot img { display: block; width: 100%; height: 100%; filter: drop-shadow(0 6px 10px rgba(13, 27, 58, .25)); }
+  .today { z-index: 1; }
+
+  .eyebrow {
+    font: 600 13px/1 "Work Sans", sans-serif; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-soft); margin: 0 0 9px;
+  }
+  .card, .upcoming {
+    position: relative; background: var(--paper); border-radius: 8px; margin-bottom: 14px;
+    -webkit-backdrop-filter: blur(16px) saturate(1.2); backdrop-filter: blur(16px) saturate(1.2);
+    box-shadow: 0 12px 34px -18px rgba(13, 27, 58, .5);
+  }
+
+  /* Today: a postcard with an airmail edge and a stamp */
+  .today { padding: 28px 22px 22px; background: var(--paper-strong); }
+  .today::before {
+    content: ""; position: absolute; inset: 0; border-radius: 8px; padding: 6px; pointer-events: none;
+    background: repeating-linear-gradient(135deg, var(--air-a) 0 14px, transparent 14px 22px, var(--air-b) 22px 36px, transparent 36px 44px);
+    -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    opacity: .55;
+  }
+  .place { font: 600 clamp(38px, 11vw, 46px)/1.02 Fraunces, Georgia, serif; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .place .star { font-size: .5em; color: var(--star); margin-left: 8px; vertical-align: .45em; }
+  .sub { margin: 0; color: var(--ink-soft); font-size: 18px; font-weight: 500; }
+  .pill {
+    display: inline-flex; gap: 8px; margin: 16px 0 0; padding: 9px 15px; border-radius: 999px;
+    background: var(--pill); font-weight: 600; font-size: 16.5px; line-height: 1.3;
+  }
+  .pill::before { content: "✈︎"; }
+  .stamp {
+    position: absolute; top: -14px; right: 14px; width: 63px; height: 72px; transform: rotate(5deg);
+    background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; text-align: center;
+    --perf: linear-gradient(#000 0 0) center / calc(100% - 9px) calc(100% - 9px) no-repeat,
+            radial-gradient(circle 3px, transparent 96%, #000) -4.5px -4.5px / 9px 9px;
+    -webkit-mask: var(--perf); mask: var(--perf);
+  }
+  .stamp span { font: 600 22px/1 Fraunces, serif; }
+  .stamp svg { display: block; margin: 0 auto; }
+  .stamp small { display: block; font: 700 7.5px/1.2 "Work Sans", sans-serif; letter-spacing: .06em; margin-top: 5px; white-space: nowrap; }
+
+  .back { padding: 18px 22px; border-left: 4px solid var(--ink-soft); }
+  .back .eyebrow { margin-bottom: 6px; }
+  .back-date { margin: 0; font: 600 27px/1.15 Fraunces, Georgia, serif; }
+  .back-date .rel::before { content: " · "; font-style: normal; }
+  .back-date .rel { font-weight: 400; font-style: italic; color: var(--ink-soft); }
+
+  .upcoming { padding: 20px 22px 16px; margin-bottom: 18px; }
+  .trips { list-style: none; margin: 0; padding: 0; }
+  .trip {
+    display: grid; grid-template-columns: 6.3em 1fr; gap: 2px 10px; align-items: baseline;
+    padding: 13px 0; border-top: 1.5px dashed var(--rule);
+  }
+  .trip.mine { margin: 0 -12px; padding: 13px 12px; background: var(--mine); border-radius: 6px; }
+  .dates { font-weight: 500; font-size: 16.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+  .where { font: 600 21px/1.2 Fraunces, Georgia, serif; }
+  .where .star { color: var(--star); margin-left: 6px; font-size: .8em; }
+  .extra { grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 6px; }
+  .badge { color: var(--ink); font-weight: 700; font-size: 14px; border: 1.5px solid currentColor; border-radius: 999px; padding: 2px 10px; }
+  .dinner { color: var(--accent); font-weight: 700; font-size: 15.5px; text-underline-offset: 3px; }
+  .key, .empty { color: var(--ink-soft); font-size: 14.5px; margin: 10px 0 0; }
+
+  .actions { display: flex; gap: 10px; margin-bottom: 26px; }
+  .btn {
+    flex: 1; min-height: 56px; display: grid; place-items: center; border-radius: 999px; text-decoration: none;
+    font: 600 19px/1 "Work Sans", sans-serif;
+  }
+  .btn-text { background: var(--accent); color: var(--accent-ink); }
+  .btn-call {
+    background: var(--paper-strong); color: var(--ink);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+
+  /* Freshness as a postmark */
+  .updated {
+    width: 124px; height: 124px; margin: 0 auto; border-radius: 50%; padding: 12px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+    background: var(--paper); color: var(--ink-soft);
+    border: 2.5px solid currentColor; outline: 1.5px solid currentColor; outline-offset: 4px;
+    font: 600 11.5px/1.35 "Work Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase;
+    transform: rotate(-8deg);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+  .updated.stale { color: var(--stale); font-weight: 700; border-width: 3px; }
+  .stale-note { display: block; margin-top: 5px; font-size: 10.5px; }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+<div class="sky-orb" aria-hidden="true"></div>
+<div id="app"></div>
+<script src="../web/format.js"></script>
+<script src="demo-data.js"></script>
+<script src="render.js"></script>
+</body>
+</html>

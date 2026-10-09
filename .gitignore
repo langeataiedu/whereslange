@@ -1,0 +1,12 @@
+node_modules/
+.wrangler/
+.dev.vars
+# Real viewer emails + phone number live in a Worker secret, never in git
+viewers.json
+# clasp project binding (script ID) — keep local
+apps-script/.clasp.json
+.DS_Store
+# Local preview config (points at a session scratch folder)
+.claude/launch.json
+# Contains real viewer emails (SPEC §5: keep them out of git)
+SPEC.md

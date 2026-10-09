@@ -1,0 +1,18 @@
+{
+  "name": "wheres-langey",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Where's Lange? — a login-protected page showing where Lange is, where he's going next, and when he's back in SF.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "demo-data": "node scripts/make-demo-data.js",
+    "templates": "npm run demo-data && python3 -m http.server 8765"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

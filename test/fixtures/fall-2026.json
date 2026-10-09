@@ -1,0 +1,39 @@
+{
+  "_comment": "Real Navan/Gmail formats, fake codes. DC trip from SPEC §7 acceptance checks plus a few later trips.",
+  "config": {
+    "home": { "city": "San Francisco", "region": "CA", "tz": "America/Los_Angeles" },
+    "metros": {
+      "stockton": { "label": "Near Mom & Dad", "airports": ["SCK", "SMF"], "cities": ["Stockton", "Lodi", "Sacramento"] },
+      "la": { "label": "Your city", "airports": ["LAX", "BUR", "LGB", "SNA", "ONT"], "cities": ["Los Angeles", "Santa Monica", "Pasadena"] },
+      "sacramento": { "label": "Your city", "airports": ["SMF"], "cities": ["Sacramento", "Davis"] },
+      "tucson": { "label": "Your city", "airports": ["TUS"], "cities": ["Tucson"] },
+      "boston": { "label": "Your city", "airports": ["BOS"], "cities": ["Boston", "Cambridge", "Somerville"] },
+      "nyc": { "label": "Your city", "airports": ["JFK", "LGA", "EWR"], "cities": ["New York", "Brooklyn", "Jersey City", "Newark"] },
+      "dc": { "label": "Your city", "airports": ["DCA", "IAD", "BWI"], "cities": ["Washington", "Arlington", "Alexandria"] },
+      "burlington": { "label": "Your city", "airports": ["BTV"], "cities": ["Burlington"] },
+      "seattle": { "label": "Your city", "airports": ["SEA"], "cities": ["Seattle", "Bellevue"] }
+    }
+  },
+  "events": [
+    { "title": "Flight: SFO (UA2386) to DCA Confirmation ABC123", "start": "2026-10-05T14:30:00-07:00", "end": "2026-10-05T22:59:00-04:00", "allDay": false, "eventType": "default" },
+    { "title": "Flight to Washington (UA 2386)", "start": "2026-10-05T14:30:00-07:00", "end": "2026-10-05T22:59:00-04:00", "allDay": false, "eventType": "fromGmail" },
+    { "title": "Stay: The Morrow Washington Dc, Curio Collection By Hilton, Washington Confirmation 0000000000", "location": "The Morrow Washington Dc, Curio Collection By Hilton, 222 M STREET NE, Washington, DC 20002, US", "start": "2026-10-05", "end": "2026-10-08", "allDay": true, "eventType": "default" },
+    { "title": "Flight: DCA (UA1234) to SFO Confirmation DEF456", "start": "2026-10-07T18:57:00-04:00", "end": "2026-10-07T21:55:00-07:00", "allDay": false, "eventType": "default" },
+    { "title": "Flight to San Francisco (UA 1234)", "start": "2026-10-07T18:57:00-04:00", "end": "2026-10-07T21:55:00-07:00", "allDay": false, "eventType": "fromGmail" },
+    { "title": "Home", "start": "2026-10-08", "end": "2026-10-09", "allDay": true, "eventType": "workingLocation" },
+    { "title": "📍 Chicago, IL", "start": "2026-10-15", "end": "2026-10-17", "allDay": true, "eventType": "default" },
+    { "title": "📍 Stockton, CA [personal]", "start": "2026-10-24", "end": "2026-10-26", "allDay": true, "eventType": "default" },
+    { "title": "Flight: SFO (LH455) to FRA Confirmation GHI789", "start": "2026-11-10T15:40:00-08:00", "end": "2026-11-11T11:15:00+01:00", "allDay": false, "eventType": "default" },
+    { "title": "Germany", "start": "2026-11-10", "end": "2026-11-21", "allDay": true, "eventType": "workingLocation" },
+    { "title": "Stay: Hotel Adlon Kempinski, Berlin Confirmation 1111111111", "location": "Hotel Adlon Kempinski, Unter den Linden 77, 10117 Berlin, DE", "start": "2026-11-11", "end": "2026-11-15", "allDay": true, "eventType": "default" },
+    { "title": "Stay: Hotel Bayerischer Hof, Munich Confirmation 2222222222", "location": "Hotel Bayerischer Hof, Promenadeplatz 2-6, 80333 Munich, DE", "start": "2026-11-15", "end": "2026-11-20", "allDay": true, "eventType": "default" },
+    { "title": "Flight: FRA (LH454) to SFO Confirmation GHI789", "start": "2026-11-20T13:35:00+01:00", "end": "2026-11-20T16:05:00-08:00", "allDay": false, "eventType": "default" }
+  ],
+  "emails": [
+    { "subject": "Your Sep 18 one-way DCA-SFO flight is confirmed - MNO345", "date": "2026-09-01T16:00:00Z" },
+    { "subject": "You've canceled your Sep 18 DCA–SFO flight", "date": "2026-09-05T16:00:00Z" },
+    { "subject": "Your Oct 7 DCA–SFO flight is being ticketed", "date": "2026-09-29T17:00:00Z" },
+    { "subject": "Your Oct 7 DCA–SFO flight is confirmed [DEF456]", "date": "2026-09-29T18:00:00Z" },
+    { "subject": "Your Nov 28 EWR–SMF flight is confirmed [JKL012]", "date": "2026-10-01T16:00:00Z" }
+  ]
+}

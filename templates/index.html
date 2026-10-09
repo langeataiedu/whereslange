@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Lange Design Preview</title>
+<style>
+  :root { --bg: #ecebe7; --ink: #1f1f1f; --soft: #666; --frame: #1b1b1d; --panel: #fff; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #161618; --ink: #eee; --soft: #aaa; --frame: #000; --panel: #222225; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.4 system-ui, sans-serif; }
+  header { padding: 20px 16px 8px; max-width: 1280px; margin: 0 auto; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  header p { margin: 0 0 14px; color: var(--soft); }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; background: var(--panel); padding: 12px 14px; border-radius: 12px; }
+  label { display: flex; gap: 8px; align-items: center; font-weight: 600; }
+  select { font: inherit; padding: 6px 8px; border-radius: 8px; }
+  .row { display: flex; flex-wrap: wrap; gap: 28px; justify-content: center; padding: 22px 16px 24px; }
+  figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .phone { width: 390px; height: 844px; max-width: calc(100vw - 32px); border-radius: 46px; padding: 12px; background: var(--frame); box-shadow: 0 20px 50px -20px rgba(0,0,0,.5); }
+  iframe { width: 100%; height: 100%; border: 0; border-radius: 34px; background: #fff; }
+  figcaption { text-align: center; }
+  figcaption select { margin-top: 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Where's Lange? — Window Seat Postcard</h1>
+  <p>The sky follows the time of day where Lange is; the cards are postcards held up against it. Fixture data, Oct–Nov 2026.</p>
+  <div class="controls">
+    <label>Show
+      <select id="preset">
+        <option value="travel,away,home">Trip moments</option>
+        <option value="dawn,air,night">Times of day (dawn · dusk · night)</option>
+        <option value="home,stockton,berlin">Stamps: Local Mail · Local Mail · Air Mail</option>
+        <option value="travel,air,stale">Travel day, in the air, out of date</option>
+      </select>
+    </label>
+    <label>Viewer
+      <select id="viewer">
+        <option value="mary">Mary (Mom, Stockton)</option>
+        <option value="jason">Jason (SF friend)</option>
+      </select>
+    </label>
+    <label>Theme
+      <select id="theme">
+        <option value="">Follow my device</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </label>
+  </div>
+</header>
+<div class="row">
+  <figure><div class="phone"><iframe title="Preview 1"></iframe></div><figcaption><select data-default="travel"></select></figcaption></figure>
+  <figure><div class="phone"><iframe title="Preview 2"></iframe></div><figcaption><select data-default="away"></select></figcaption></figure>
+  <figure><div class="phone"><iframe title="Preview 3"></iframe></div><figcaption><select data-default="home"></select></figcaption></figure>
+</div>
+<script src="demo-data.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const figures = [...document.querySelectorAll('figure')];
+  for (const f of figures) {
+    const sel = f.querySelector('select');
+    for (const [key, s] of Object.entries(DEMO.scenarios)) sel.add(new Option(s.label, key));
+    sel.value = sel.dataset.default;
+    sel.addEventListener('change', update);
+  }
+  function update() {
+    for (const f of figures) {
+      const q = new URLSearchParams({ scenario: f.querySelector('select').value, viewer: $('viewer').value, theme: $('theme').value });
+      f.querySelector('iframe').src = `lange.html?${q}`;
+    }
+  }
+  $('preset').addEventListener('change', () => {
+    $('preset').value.split(',').forEach((key, i) => { figures[i].querySelector('select').value = key; });
+    update();
+  });
+  ['viewer', 'theme'].forEach((id) => $(id).addEventListener('change', update));
+  update();
+</script>
+</body>
+</html>
