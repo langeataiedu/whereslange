@@ -15,7 +15,7 @@ const JASON = null; // SF friend: no highlight
 describe('page text', () => {
   it('travel day, before the flight (the SPEC mockup)', () => {
     const vm = F.viewModel(status, opts('2026-10-07T20:12:00Z', MARY));
-    expect(vm.today).toMatchObject({ place: 'Washington, DC', sub: '4:12 pm there', inAir: false, work: true });
+    expect(vm.today).toMatchObject({ place: 'Washington, DC', sub: '', localTime: "Lange's local time: 4:12 pm", inAir: false, work: true });
     expect(vm.pill).toBe('Flying home tonight · lands about 10 pm');
     expect(vm.back).toEqual({ date: 'Thu, Oct 8', rel: 'tomorrow' });
     expect(vm.updated).toEqual({ text: 'Updated 1:12 pm today', stale: false });
@@ -23,7 +23,7 @@ describe('page text', () => {
 
   it('in the air', () => {
     const vm = F.viewModel(status, opts('2026-10-07T23:30:00Z', MARY));
-    expect(vm.today).toMatchObject({ place: 'In the air', sub: 'Washington, DC → San Francisco', inAir: true });
+    expect(vm.today).toMatchObject({ place: 'In the air', sub: 'Washington, DC → San Francisco', localTime: null, inAir: true });
     expect(vm.pill).toBe('On the way home · lands about 10 pm');
   });
 
@@ -56,10 +56,16 @@ describe('page text', () => {
     expect(jason.every((t) => !t.badge && !t.dinnerHref)).toBe(true);
   });
 
+  it('at home: "At home" plus the local time', () => {
+    const s = { ...status, today: { city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false }, homeOn: null };
+    const vm = F.viewModel(s, opts('2026-10-08T19:05:00Z', MARY));
+    expect(vm.today).toMatchObject({ sub: 'At home', localTime: "Lange's local time: 12:05 pm" });
+  });
+
   it('unrecognized place: no local time, no crash', () => {
     const s = { ...status, today: { city: 'Atlantis', region: 'Narnia', tz: null, work: false } };
     const vm = F.viewModel(s, opts('2026-10-21T19:00:00Z', MARY));
-    expect(vm.today).toMatchObject({ place: 'Atlantis, Narnia', sub: '' });
+    expect(vm.today).toMatchObject({ place: 'Atlantis, Narnia', sub: '', localTime: null });
   });
 
   it('stamp: Local Mail in the Bay Area, Sacramento and San Joaquin counties; Air Mail elsewhere or in flight', () => {

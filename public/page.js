@@ -37,7 +37,8 @@
     const today = el('section', 'card today', null,
       el('p', 'eyebrow', away ? 'Today · Greetings from' : 'Today'),
       el('p', 'place', vm.today.place, star(vm.today.work && away)),
-      el('p', 'sub', vm.today.sub),
+      vm.today.sub && el('p', 'sub', vm.today.sub),
+      vm.today.localTime && el('p', 'local-time', vm.today.localTime),
       vm.pill && el('p', 'pill', vm.pill),
       stamp);
 

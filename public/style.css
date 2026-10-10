@@ -93,6 +93,7 @@ body::after { /* dims the sky in dark mode */
 .place { font: 600 clamp(38px, 11vw, 46px)/1.02 Fraunces, Georgia, serif; letter-spacing: -0.02em; margin: 0 0 8px; }
 .place .star { font-size: .5em; color: var(--star); margin-left: 8px; vertical-align: .45em; }
 .sub { margin: 0; color: var(--ink-soft); font-size: 18px; font-weight: 500; }
+.local-time { margin: 4px 0 0; color: var(--ink-soft); font-size: 17px; }
 .pill {
   display: inline-flex; gap: 8px; margin: 16px 0 0; padding: 9px 15px; border-radius: 999px;
   background: var(--pill); font-weight: 600; font-size: 16.5px; line-height: 1.3;

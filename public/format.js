@@ -140,7 +140,8 @@
     const today = status.today;
     const isHome = today.city === home.city && today.region === home.region;
     const inAir = !!today.transit && Date.parse(today.transit.departs) <= now && Date.parse(today.transit.lands) > now;
-    const there = isHome || !today.tz ? null : partsIn(now, today.tz); // no tz: leave out the local time
+    // Lange's wall clock, wherever he is. Left out in the air, or when the place wasn't recognized (no tz).
+    const lange = !inAir && today.tz ? partsIn(now, today.tz) : null;
 
     const trips = status.trips.map((t) => {
       const dates = formatRange(t.start, t.end);
@@ -152,12 +153,13 @@
     return {
       today: {
         place: inAir ? 'In the air' : placeText(today),
-        sub: inAir ? `${placeText(today)} → ${today.transit.to}` : there ? `${clock(there.h, there.mi)} there` : isHome ? 'At home' : '',
+        sub: inAir ? `${placeText(today)} → ${today.transit.to}` : isHome ? 'At home' : '',
+        localTime: lange ? `Lange's local time: ${clock(lange.h, lange.mi)}` : null,
         inAir,
         isHome,
         mail: mailStamp(today, inAir),
         work: today.work,
-        localHour: (there || partsIn(now, opts.tz)).h,
+        localHour: (lange || partsIn(now, opts.tz)).h,
       },
       pill: travelPill(today, now, home),
       back: status.homeOn ? { date: formatDate(status.homeOn), rel: relativeDay(status.homeOn, partsIn(now, opts.tz).date) } : null,
