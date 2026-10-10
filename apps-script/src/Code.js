@@ -73,7 +73,7 @@ function checkMarkers() {
       const m = parseMarker(asMarkerTitle_(title));
       verdict = !m || !(m.place.city || m.place.region) ? 'ignored: no place in the title'
         : `OK: ${[m.place.city, m.place.region].filter(Boolean).join(', ')}${m.tags.work ? ' [work]' : ''}${m.tags.personal ? ' [personal]' : ''}`
-          + (m.place.tz ? '' : ' (time zone unknown: local time will show in Pacific time)');
+          + (m.place.tz ? '' : ' (place not recognized: the page will leave out the local time)');
     }
     lines.push(`- ${when}: "${title}" → ${verdict}`);
   }

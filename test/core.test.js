@@ -144,6 +144,38 @@ describe('merge: rules', () => {
     expect(s.trips).toEqual([{ start: '2026-10-10', end: '2026-10-11', place: 'Los Angeles, CA', work: false, metros: ['la'] }]);
   });
 
+  it('every country: names, aliases and US state names resolve to a time zone', () => {
+    const place = (t) => core.parseMarker(t).place;
+    expect(place('📍 Boise, Idaho')).toEqual({ city: 'Boise', region: 'ID', tz: 'America/Boise' });
+    expect(place('📍 Atlanta, Georgia')).toEqual({ city: 'Atlanta', region: 'GA', tz: 'America/New_York' });
+    expect(place('📍 Tbilisi, Georgia')).toEqual({ city: 'Tbilisi', region: 'Georgia', tz: 'Asia/Tbilisi' });
+    expect(place('📍 Edinburgh, Scotland').tz).toBe('Europe/London');
+    expect(place('📍 Istanbul, Türkiye').tz).toBe('Europe/Istanbul');
+    expect(place('📍 Abidjan, Ivory Coast').tz).toBe('Africa/Abidjan');
+    expect(place('📍 Thimphu, Bhutan').tz).toBe('Asia/Thimphu');
+    expect(place('📍 Chicago')).toEqual({ city: 'Chicago', region: 'IL', tz: 'America/Chicago' });
+  });
+
+  it('cities in multi-zone countries get their own time zone', () => {
+    expect(core.parseMarker('📍 Vancouver, Canada').place.tz).toBe('America/Vancouver');
+    expect(core.parseMarker('📍 Perth, Australia').place.tz).toBe('Australia/Perth');
+    expect(core.parseMarker('📍 Cancún, Mexico').place.tz).toBe('America/Cancun');
+    expect(core.parseAddress('Some Resort, Jl. Raya 1, 80361 Bali, ID').tz).toBe('Asia/Makassar');
+  });
+
+  it('an unrecognized place has no time zone (the page leaves out the local time)', () => {
+    expect(core.parseMarker('📍 Atlantis, Narnia').place.tz).toBeNull();
+    const s = statusAt('2026-10-21T19:00:00Z', { events: [allDay('📍 Atlantis, Narnia', '2026-10-20', '2026-10-23')], emails: [] });
+    expect(s.today).toEqual({ city: 'Atlantis', region: 'Narnia', tz: null, work: false });
+  });
+
+  it('metros match cities only within their states', () => {
+    const config = { ...fixture.config, metros: { li: { regions: ['NY'], cities: ['Lawrence', 'Melville'] } } };
+    const metros = (t) => core.buildStatus({ config, events: [allDay(t, '2026-10-20', '2026-10-22')], emails: [], now: '2026-10-10T19:00:00Z' }).trips[0].metros;
+    expect(metros('📍 Lawrence, NY')).toEqual(['li']);
+    expect(metros('📍 Lawrence, KS')).toEqual([]);
+  });
+
   it('multi-stop trips: countries when abroad, short list at home', () => {
     const at = (events) => statusAt('2026-10-01T19:00:00Z', { events, emails: [] }).trips.map((t) => t.place);
     expect(at([

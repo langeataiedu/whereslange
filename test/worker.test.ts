@@ -108,6 +108,10 @@ describe('status updates (Apps Script → Worker)', () => {
     expect((await asViewer('mom@example.com', '/api/status')).status).toBe(200);
   });
 
+  it('accepts a status for a place it could not recognize (tz null)', async () => {
+    expect((await postStatus({ ...status, today: { ...status.today, tz: null } })).status).toBe(200);
+  });
+
   it('needs the shared secret and an Access token', async () => {
     expect((await postStatus(status, { secret: '' })).status).toBe(403);
     expect((await postStatus(status, { secret: 'wrong' })).status).toBe(403);
@@ -121,6 +125,7 @@ describe('status updates (Apps Script → Worker)', () => {
       { ...status, today: { ...status.today, confirmation: 'ABC123' } },
       { ...status, today: { ...status.today, transit: { ...status.today.transit, flight: 'UA1234' } } },
       { ...status, today: { ...status.today, tz: 'Not/AZone' } },
+      { ...status, today: { ...status.today, tz: 42 } },
       { ...status, trips: [{ ...status.trips[0], notes: 'Hotel Adlon' }] },
       { ...status, trips: [{ ...status.trips[0], start: 'Oct 15' }] },
       { ...status, homeOn: 'tomorrow' },

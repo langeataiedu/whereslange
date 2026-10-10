@@ -220,6 +220,14 @@ describe('Apps Script wrapper', () => {
     expect(work).toEqual([]);
   });
 
+  it('Long Island trips reach NYC viewers, and only New York towns count', () => {
+    const day = (title, start, end) => ({ title, start, end, allDay: true });
+    const gas = appsScript({ markers: [day('Melville, NY', '2026-10-20', '2026-10-22'), day('Lawrence, KS', '2026-10-25', '2026-10-27')] });
+    const trips = plain(gas.run('dryRun')).trips;
+    expect(trips.find((t) => t.place === 'Melville, NY').metros).toEqual(['nyc', 'longisland']);
+    expect(trips.find((t) => t.place === 'Lawrence, KS').metros).toEqual([]);
+  });
+
   it('checkMarkers spots a missing or misspelled MARKER_CALENDAR_ID', () => {
     const { MARKER_CALENDAR_ID, ...rest } = PROPS;
     const gas = appsScript({ props: { ...rest, MARKER_CALENDAR: 'x@group.calendar.google.com' } });

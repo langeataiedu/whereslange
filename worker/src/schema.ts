@@ -33,7 +33,7 @@ export function validateStatus(s: unknown): string | null {
   const t = s.today;
   if (!isObj(t) || !hasExactly(t, ['city', 'region', 'tz', 'work'], ['transit'])) return 'today fields';
   if (!str(t.city) || !str(t.region) || typeof t.work !== 'boolean') return 'today values';
-  if (!str(t.tz, 64) || !isTimeZone(t.tz)) return 'today.tz';
+  if (t.tz !== null && (!str(t.tz, 64) || !isTimeZone(t.tz))) return 'today.tz'; // null: place not recognized
   if ('transit' in t) {
     const x = t.transit;
     if (!isObj(x) || !hasExactly(x, ['to', 'departs', 'lands'])) return 'transit fields';

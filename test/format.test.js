@@ -56,6 +56,12 @@ describe('page text', () => {
     expect(jason.every((t) => !t.badge && !t.dinnerHref)).toBe(true);
   });
 
+  it('unrecognized place: no local time, no crash', () => {
+    const s = { ...status, today: { city: 'Atlantis', region: 'Narnia', tz: null, work: false } };
+    const vm = F.viewModel(s, opts('2026-10-21T19:00:00Z', MARY));
+    expect(vm.today).toMatchObject({ place: 'Atlantis, Narnia', sub: '' });
+  });
+
   it('stamp: Local Mail in the Bay Area, Sacramento and San Joaquin counties; Air Mail elsewhere or in flight', () => {
     const at = (city, region) => F.mailStamp({ city, region, tz: 'America/Los_Angeles', work: false }, false);
     expect(at('San Francisco', 'CA')).toBe('local');

@@ -1,20 +1,138 @@
 {
-  "home": { "city": "San Francisco", "region": "CA" },
+  "home": {
+    "city": "San Francisco",
+    "region": "CA"
+  },
   "phone": "+15555550123",
   "viewers": {
-    "mom@example.com": { "name": "Mary", "metro": "stockton" },
-    "dad@example.com": { "name": "Ruperto", "metro": "stockton" },
-    "friend@example.com": { "name": "Jason", "metro": null }
+    "mom@example.com": {
+      "name": "Mary",
+      "metro": "stockton"
+    },
+    "dad@example.com": {
+      "name": "Ruperto",
+      "metro": "stockton"
+    },
+    "friend@example.com": {
+      "name": "Jason",
+      "metro": null
+    }
   },
   "metros": {
-    "stockton": { "label": "Near Mom & Dad", "airports": ["SCK", "SMF"], "cities": ["Stockton", "Lodi", "Sacramento"] },
-    "la": { "label": "Your city", "airports": ["LAX", "BUR", "LGB", "SNA", "ONT"], "cities": ["Los Angeles", "Santa Monica", "Pasadena"] },
-    "sacramento": { "label": "Your city", "airports": ["SMF"], "cities": ["Sacramento", "Davis"] },
-    "tucson": { "label": "Your city", "airports": ["TUS"], "cities": ["Tucson"] },
-    "boston": { "label": "Your city", "airports": ["BOS"], "cities": ["Boston", "Cambridge", "Somerville"] },
-    "nyc": { "label": "Your city", "airports": ["JFK", "LGA", "EWR"], "cities": ["New York", "Brooklyn", "Jersey City", "Newark"] },
-    "dc": { "label": "Your city", "airports": ["DCA", "IAD", "BWI"], "cities": ["Washington", "Arlington", "Alexandria"] },
-    "burlington": { "label": "Your city", "airports": ["BTV"], "cities": ["Burlington"] },
-    "seattle": { "label": "Your city", "airports": ["SEA"], "cities": ["Seattle", "Bellevue"] }
+    "stockton": {
+      "label": "Near Mom & Dad",
+      "airports": [
+        "SCK",
+        "SMF"
+      ],
+      "cities": [
+        "Stockton",
+        "Lodi",
+        "Sacramento"
+      ]
+    },
+    "la": {
+      "label": "Your city",
+      "airports": [
+        "LAX",
+        "BUR",
+        "LGB",
+        "SNA",
+        "ONT"
+      ],
+      "cities": [
+        "Los Angeles",
+        "Santa Monica",
+        "Pasadena"
+      ]
+    },
+    "sacramento": {
+      "label": "Your city",
+      "airports": [
+        "SMF"
+      ],
+      "cities": [
+        "Sacramento",
+        "Davis"
+      ]
+    },
+    "tucson": {
+      "label": "Your city",
+      "airports": [
+        "TUS"
+      ],
+      "cities": [
+        "Tucson"
+      ]
+    },
+    "boston": {
+      "label": "Your city",
+      "airports": [
+        "BOS"
+      ],
+      "cities": [
+        "Boston",
+        "Cambridge",
+        "Somerville"
+      ]
+    },
+    "nyc": {
+      "label": "Your city",
+      "airports": [
+        "JFK",
+        "LGA",
+        "EWR"
+      ],
+      "cities": [
+        "New York",
+        "Brooklyn",
+        "Jersey City",
+        "Newark"
+      ]
+    },
+    "dc": {
+      "label": "Your city",
+      "airports": [
+        "DCA",
+        "IAD",
+        "BWI"
+      ],
+      "cities": [
+        "Washington",
+        "Arlington",
+        "Alexandria"
+      ]
+    },
+    "burlington": {
+      "label": "Your city",
+      "airports": [
+        "BTV"
+      ],
+      "cities": [
+        "Burlington"
+      ]
+    },
+    "seattle": {
+      "label": "Your city",
+      "airports": [
+        "SEA"
+      ],
+      "cities": [
+        "Seattle",
+        "Bellevue"
+      ]
+    },
+    "longisland": {
+      "label": "Your city",
+      "airports": [
+        "ISP"
+      ],
+      "cities": [
+        "Melville",
+        "Huntington",
+        "Garden City",
+        "Montauk"
+      ]
+    }
   }
 }

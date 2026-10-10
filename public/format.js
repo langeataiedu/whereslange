@@ -140,7 +140,7 @@
     const today = status.today;
     const isHome = today.city === home.city && today.region === home.region;
     const inAir = !!today.transit && Date.parse(today.transit.departs) <= now && Date.parse(today.transit.lands) > now;
-    const there = isHome ? null : partsIn(now, today.tz);
+    const there = isHome || !today.tz ? null : partsIn(now, today.tz); // no tz: leave out the local time
 
     const trips = status.trips.map((t) => {
       const dates = formatRange(t.start, t.end);
@@ -152,7 +152,7 @@
     return {
       today: {
         place: inAir ? 'In the air' : placeText(today),
-        sub: inAir ? `${placeText(today)} → ${today.transit.to}` : there ? `${clock(there.h, there.mi)} there` : 'At home',
+        sub: inAir ? `${placeText(today)} → ${today.transit.to}` : there ? `${clock(there.h, there.mi)} there` : isHome ? 'At home' : '',
         inAir,
         isHome,
         mail: mailStamp(today, inAir),

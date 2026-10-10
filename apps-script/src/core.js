@@ -88,6 +88,57 @@ const AIRPORTS = {
   MNL: { city: 'Manila', region: 'Philippines', tz: 'Asia/Manila' },
   SIN: { city: 'Singapore', region: 'Singapore', tz: 'Asia/Singapore' },
   SYD: { city: 'Sydney', region: 'Australia', tz: 'Australia/Sydney' },
+  // More US
+  ISP: { city: 'Islip', region: 'NY', tz: NY }, BOI: { city: 'Boise', region: 'ID', tz: 'America/Boise' },
+  MSY: { city: 'New Orleans', region: 'LA', tz: CHI }, BNA: { city: 'Nashville', region: 'TN', tz: CHI },
+  MCO: { city: 'Orlando', region: 'FL', tz: NY }, TPA: { city: 'Tampa', region: 'FL', tz: NY },
+  FLL: { city: 'Fort Lauderdale', region: 'FL', tz: NY }, PIT: { city: 'Pittsburgh', region: 'PA', tz: NY },
+  CLE: { city: 'Cleveland', region: 'OH', tz: NY }, CMH: { city: 'Columbus', region: 'OH', tz: NY },
+  IND: { city: 'Indianapolis', region: 'IN', tz: 'America/Indiana/Indianapolis' }, MCI: { city: 'Kansas City', region: 'MO', tz: CHI },
+  STL: { city: 'St. Louis', region: 'MO', tz: CHI }, SAT: { city: 'San Antonio', region: 'TX', tz: CHI },
+  ABQ: { city: 'Albuquerque', region: 'NM', tz: DEN }, ANC: { city: 'Anchorage', region: 'AK', tz: 'America/Anchorage' },
+  OGG: { city: 'Maui', region: 'HI', tz: 'Pacific/Honolulu' }, KOA: { city: 'Kona', region: 'HI', tz: 'Pacific/Honolulu' },
+  LIH: { city: 'Kauai', region: 'HI', tz: 'Pacific/Honolulu' }, SBA: { city: 'Santa Barbara', region: 'CA', tz: LA },
+  PSP: { city: 'Palm Springs', region: 'CA', tz: LA }, RNO: { city: 'Reno', region: 'NV', tz: LA },
+  MRY: { city: 'Monterey', region: 'CA', tz: LA }, FAT: { city: 'Fresno', region: 'CA', tz: LA },
+  // More international
+  YUL: { city: 'Montreal', region: 'Canada', tz: 'America/Toronto' }, YYC: { city: 'Calgary', region: 'Canada', tz: 'America/Edmonton' },
+  CUN: { city: 'Cancún', region: 'Mexico', tz: 'America/Cancun' }, SJD: { city: 'Los Cabos', region: 'Mexico', tz: 'America/Mazatlan' },
+  GDL: { city: 'Guadalajara', region: 'Mexico', tz: 'America/Mexico_City' }, PVR: { city: 'Puerto Vallarta', region: 'Mexico', tz: 'America/Mexico_City' },
+  LIS: { city: 'Lisbon', region: 'Portugal', tz: 'Europe/Lisbon' }, OPO: { city: 'Porto', region: 'Portugal', tz: 'Europe/Lisbon' },
+  MAD: { city: 'Madrid', region: 'Spain', tz: 'Europe/Madrid' }, BCN: { city: 'Barcelona', region: 'Spain', tz: 'Europe/Madrid' },
+  FCO: { city: 'Rome', region: 'Italy', tz: 'Europe/Rome' }, MXP: { city: 'Milan', region: 'Italy', tz: 'Europe/Rome' },
+  VCE: { city: 'Venice', region: 'Italy', tz: 'Europe/Rome' }, ZRH: { city: 'Zurich', region: 'Switzerland', tz: 'Europe/Zurich' },
+  GVA: { city: 'Geneva', region: 'Switzerland', tz: 'Europe/Zurich' }, VIE: { city: 'Vienna', region: 'Austria', tz: 'Europe/Vienna' },
+  PRG: { city: 'Prague', region: 'Czech Republic', tz: 'Europe/Prague' }, BUD: { city: 'Budapest', region: 'Hungary', tz: 'Europe/Budapest' },
+  WAW: { city: 'Warsaw', region: 'Poland', tz: 'Europe/Warsaw' }, CPH: { city: 'Copenhagen', region: 'Denmark', tz: 'Europe/Copenhagen' },
+  ARN: { city: 'Stockholm', region: 'Sweden', tz: 'Europe/Stockholm' }, OSL: { city: 'Oslo', region: 'Norway', tz: 'Europe/Oslo' },
+  HEL: { city: 'Helsinki', region: 'Finland', tz: 'Europe/Helsinki' }, KEF: { city: 'Reykjavik', region: 'Iceland', tz: 'Atlantic/Reykjavik' },
+  BRU: { city: 'Brussels', region: 'Belgium', tz: 'Europe/Brussels' }, LGW: { city: 'London', region: 'United Kingdom', tz: 'Europe/London' },
+  STN: { city: 'London', region: 'United Kingdom', tz: 'Europe/London' }, EDI: { city: 'Edinburgh', region: 'United Kingdom', tz: 'Europe/London' },
+  MAN: { city: 'Manchester', region: 'United Kingdom', tz: 'Europe/London' }, DUS: { city: 'Düsseldorf', region: 'Germany', tz: 'Europe/Berlin' },
+  HAM: { city: 'Hamburg', region: 'Germany', tz: 'Europe/Berlin' }, ATH: { city: 'Athens', region: 'Greece', tz: 'Europe/Athens' },
+  IST: { city: 'Istanbul', region: 'Turkey', tz: 'Europe/Istanbul' }, DXB: { city: 'Dubai', region: 'United Arab Emirates', tz: 'Asia/Dubai' },
+  AUH: { city: 'Abu Dhabi', region: 'United Arab Emirates', tz: 'Asia/Dubai' }, DOH: { city: 'Doha', region: 'Qatar', tz: 'Asia/Qatar' },
+  TLV: { city: 'Tel Aviv', region: 'Israel', tz: 'Asia/Jerusalem' }, CAI: { city: 'Cairo', region: 'Egypt', tz: 'Africa/Cairo' },
+  RAK: { city: 'Marrakesh', region: 'Morocco', tz: 'Africa/Casablanca' }, CMN: { city: 'Casablanca', region: 'Morocco', tz: 'Africa/Casablanca' },
+  JNB: { city: 'Johannesburg', region: 'South Africa', tz: 'Africa/Johannesburg' }, CPT: { city: 'Cape Town', region: 'South Africa', tz: 'Africa/Johannesburg' },
+  NBO: { city: 'Nairobi', region: 'Kenya', tz: 'Africa/Nairobi' }, LOS: { city: 'Lagos', region: 'Nigeria', tz: 'Africa/Lagos' },
+  ACC: { city: 'Accra', region: 'Ghana', tz: 'Africa/Accra' }, KGL: { city: 'Kigali', region: 'Rwanda', tz: 'Africa/Kigali' },
+  ADD: { city: 'Addis Ababa', region: 'Ethiopia', tz: 'Africa/Addis_Ababa' }, DEL: { city: 'Delhi', region: 'India', tz: 'Asia/Kolkata' },
+  BOM: { city: 'Mumbai', region: 'India', tz: 'Asia/Kolkata' }, BLR: { city: 'Bengaluru', region: 'India', tz: 'Asia/Kolkata' },
+  BKK: { city: 'Bangkok', region: 'Thailand', tz: 'Asia/Bangkok' }, SGN: { city: 'Ho Chi Minh City', region: 'Vietnam', tz: 'Asia/Ho_Chi_Minh' },
+  HAN: { city: 'Hanoi', region: 'Vietnam', tz: 'Asia/Bangkok' }, KUL: { city: 'Kuala Lumpur', region: 'Malaysia', tz: 'Asia/Kuala_Lumpur' },
+  CGK: { city: 'Jakarta', region: 'Indonesia', tz: 'Asia/Jakarta' }, DPS: { city: 'Bali', region: 'Indonesia', tz: 'Asia/Makassar' },
+  HKG: { city: 'Hong Kong', region: 'Hong Kong', tz: 'Asia/Hong_Kong' }, TPE: { city: 'Taipei', region: 'Taiwan', tz: 'Asia/Taipei' },
+  PEK: { city: 'Beijing', region: 'China', tz: 'Asia/Shanghai' }, PVG: { city: 'Shanghai', region: 'China', tz: 'Asia/Shanghai' },
+  KIX: { city: 'Osaka', region: 'Japan', tz: 'Asia/Tokyo' }, MEL: { city: 'Melbourne', region: 'Australia', tz: 'Australia/Melbourne' },
+  BNE: { city: 'Brisbane', region: 'Australia', tz: 'Australia/Brisbane' }, AKL: { city: 'Auckland', region: 'New Zealand', tz: 'Pacific/Auckland' },
+  GRU: { city: 'São Paulo', region: 'Brazil', tz: 'America/Sao_Paulo' }, GIG: { city: 'Rio de Janeiro', region: 'Brazil', tz: 'America/Sao_Paulo' },
+  EZE: { city: 'Buenos Aires', region: 'Argentina', tz: 'America/Argentina/Buenos_Aires' }, SCL: { city: 'Santiago', region: 'Chile', tz: 'America/Santiago' },
+  LIM: { city: 'Lima', region: 'Peru', tz: 'America/Lima' }, BOG: { city: 'Bogotá', region: 'Colombia', tz: 'America/Bogota' },
+  MDE: { city: 'Medellín', region: 'Colombia', tz: 'America/Bogota' }, PTY: { city: 'Panama City', region: 'Panama', tz: 'America/Panama' },
+  SJO: { city: 'San José', region: 'Costa Rica', tz: 'America/Costa_Rica' },
 };
 
 // Primary time zone per US state (good enough for city-level display).
@@ -100,36 +151,130 @@ const US_STATE_TZ = {
   TN: CHI, TX: CHI, UT: DEN, VT: NY, VA: NY, WA: LA, WV: NY, WI: CHI, WY: DEN, PR: 'America/Puerto_Rico',
 };
 
-// ISO country code -> [display name, representative time zone]
-const COUNTRIES = {
-  US: ['United States', NY], CA: ['Canada', 'America/Toronto'], MX: ['Mexico', 'America/Mexico_City'],
-  GB: ['United Kingdom', 'Europe/London'], IE: ['Ireland', 'Europe/Dublin'], FR: ['France', 'Europe/Paris'],
-  DE: ['Germany', 'Europe/Berlin'], NL: ['Netherlands', 'Europe/Amsterdam'], BE: ['Belgium', 'Europe/Brussels'],
-  ES: ['Spain', 'Europe/Madrid'], PT: ['Portugal', 'Europe/Lisbon'], IT: ['Italy', 'Europe/Rome'],
-  CH: ['Switzerland', 'Europe/Zurich'], AT: ['Austria', 'Europe/Vienna'], DK: ['Denmark', 'Europe/Copenhagen'],
-  SE: ['Sweden', 'Europe/Stockholm'], NO: ['Norway', 'Europe/Oslo'], FI: ['Finland', 'Europe/Helsinki'],
-  PL: ['Poland', 'Europe/Warsaw'], GR: ['Greece', 'Europe/Athens'], JP: ['Japan', 'Asia/Tokyo'],
-  KR: ['South Korea', 'Asia/Seoul'], CN: ['China', 'Asia/Shanghai'], SG: ['Singapore', 'Asia/Singapore'],
-  IN: ['India', 'Asia/Kolkata'], PH: ['Philippines', 'Asia/Manila'], AU: ['Australia', 'Australia/Sydney'],
-  NZ: ['New Zealand', 'Pacific/Auckland'], AE: ['United Arab Emirates', 'Asia/Dubai'],
-  IL: ['Israel', 'Asia/Jerusalem'], BR: ['Brazil', 'America/Sao_Paulo'], ZA: ['South Africa', 'Africa/Johannesburg'],
-  KE: ['Kenya', 'Africa/Nairobi'], HU: ['Hungary', 'Europe/Budapest'], MA: ['Morocco', 'Africa/Casablanca'],
-  CZ: ['Czech Republic', 'Europe/Prague'], SK: ['Slovakia', 'Europe/Bratislava'], RO: ['Romania', 'Europe/Bucharest'],
-  BG: ['Bulgaria', 'Europe/Sofia'], HR: ['Croatia', 'Europe/Zagreb'], SI: ['Slovenia', 'Europe/Ljubljana'],
-  RS: ['Serbia', 'Europe/Belgrade'], UA: ['Ukraine', 'Europe/Kyiv'], EE: ['Estonia', 'Europe/Tallinn'],
-  LV: ['Latvia', 'Europe/Riga'], LT: ['Lithuania', 'Europe/Vilnius'], IS: ['Iceland', 'Atlantic/Reykjavik'],
-  LU: ['Luxembourg', 'Europe/Luxembourg'], MT: ['Malta', 'Europe/Malta'], CY: ['Cyprus', 'Asia/Nicosia'],
-  TR: ['Turkey', 'Europe/Istanbul'], EG: ['Egypt', 'Africa/Cairo'], NG: ['Nigeria', 'Africa/Lagos'],
-  GH: ['Ghana', 'Africa/Accra'], RW: ['Rwanda', 'Africa/Kigali'], TZ: ['Tanzania', 'Africa/Dar_es_Salaam'],
-  SA: ['Saudi Arabia', 'Asia/Riyadh'], QA: ['Qatar', 'Asia/Qatar'], JO: ['Jordan', 'Asia/Amman'],
-  PK: ['Pakistan', 'Asia/Karachi'], BD: ['Bangladesh', 'Asia/Dhaka'], LK: ['Sri Lanka', 'Asia/Colombo'],
-  NP: ['Nepal', 'Asia/Kathmandu'], TH: ['Thailand', 'Asia/Bangkok'], VN: ['Vietnam', 'Asia/Ho_Chi_Minh'],
-  KH: ['Cambodia', 'Asia/Phnom_Penh'], MY: ['Malaysia', 'Asia/Kuala_Lumpur'], ID: ['Indonesia', 'Asia/Jakarta'],
-  TW: ['Taiwan', 'Asia/Taipei'], HK: ['Hong Kong', 'Asia/Hong_Kong'], AR: ['Argentina', 'America/Argentina/Buenos_Aires'],
-  CL: ['Chile', 'America/Santiago'], CO: ['Colombia', 'America/Bogota'], PE: ['Peru', 'America/Lima'],
-  EC: ['Ecuador', 'America/Guayaquil'], CR: ['Costa Rica', 'America/Costa_Rica'], PA: ['Panama', 'America/Panama'],
-  GT: ['Guatemala', 'America/Guatemala'], DO: ['Dominican Republic', 'America/Santo_Domingo'], JM: ['Jamaica', 'America/Jamaica'],
+// Every country and inhabited territory: ISO code | display name | representative time zone.
+// Countries spanning several zones use the capital's (or the most-visited region's); see CITY_TZ.
+const COUNTRY_TABLE = `
+AD|Andorra|Europe/Andorra AE|United Arab Emirates|Asia/Dubai AF|Afghanistan|Asia/Kabul AG|Antigua and Barbuda|America/Antigua
+AI|Anguilla|America/Anguilla AL|Albania|Europe/Tirane AM|Armenia|Asia/Yerevan AO|Angola|Africa/Luanda
+AQ|Antarctica|Antarctica/McMurdo AR|Argentina|America/Argentina/Buenos_Aires AS|American Samoa|Pacific/Pago_Pago
+AT|Austria|Europe/Vienna AU|Australia|Australia/Sydney AW|Aruba|America/Aruba AX|Åland Islands|Europe/Mariehamn
+AZ|Azerbaijan|Asia/Baku BA|Bosnia and Herzegovina|Europe/Sarajevo BB|Barbados|America/Barbados BD|Bangladesh|Asia/Dhaka
+BE|Belgium|Europe/Brussels BF|Burkina Faso|Africa/Ouagadougou BG|Bulgaria|Europe/Sofia BH|Bahrain|Asia/Bahrain
+BI|Burundi|Africa/Bujumbura BJ|Benin|Africa/Porto-Novo BL|Saint Barthélemy|America/St_Barthelemy BM|Bermuda|Atlantic/Bermuda
+BN|Brunei|Asia/Brunei BO|Bolivia|America/La_Paz BQ|Caribbean Netherlands|America/Kralendijk BR|Brazil|America/Sao_Paulo
+BS|Bahamas|America/Nassau BT|Bhutan|Asia/Thimphu BW|Botswana|Africa/Gaborone BY|Belarus|Europe/Minsk BZ|Belize|America/Belize
+CA|Canada|America/Toronto CC|Cocos Islands|Indian/Cocos CD|Democratic Republic of the Congo|Africa/Kinshasa
+CF|Central African Republic|Africa/Bangui CG|Republic of the Congo|Africa/Brazzaville CH|Switzerland|Europe/Zurich
+CI|Côte d'Ivoire|Africa/Abidjan CK|Cook Islands|Pacific/Rarotonga CL|Chile|America/Santiago CM|Cameroon|Africa/Douala
+CN|China|Asia/Shanghai CO|Colombia|America/Bogota CR|Costa Rica|America/Costa_Rica CU|Cuba|America/Havana
+CV|Cape Verde|Atlantic/Cape_Verde CW|Curaçao|America/Curacao CX|Christmas Island|Indian/Christmas CY|Cyprus|Asia/Nicosia
+CZ|Czech Republic|Europe/Prague DE|Germany|Europe/Berlin DJ|Djibouti|Africa/Djibouti DK|Denmark|Europe/Copenhagen
+DM|Dominica|America/Dominica DO|Dominican Republic|America/Santo_Domingo DZ|Algeria|Africa/Algiers EC|Ecuador|America/Guayaquil
+EE|Estonia|Europe/Tallinn EG|Egypt|Africa/Cairo EH|Western Sahara|Africa/El_Aaiun ER|Eritrea|Africa/Asmara ES|Spain|Europe/Madrid
+ET|Ethiopia|Africa/Addis_Ababa FI|Finland|Europe/Helsinki FJ|Fiji|Pacific/Fiji FK|Falkland Islands|Atlantic/Stanley
+FM|Micronesia|Pacific/Pohnpei FO|Faroe Islands|Atlantic/Faroe FR|France|Europe/Paris GA|Gabon|Africa/Libreville
+GB|United Kingdom|Europe/London GD|Grenada|America/Grenada GE|Georgia|Asia/Tbilisi GF|French Guiana|America/Cayenne
+GG|Guernsey|Europe/Guernsey GH|Ghana|Africa/Accra GI|Gibraltar|Europe/Gibraltar GL|Greenland|America/Nuuk GM|Gambia|Africa/Banjul
+GN|Guinea|Africa/Conakry GP|Guadeloupe|America/Guadeloupe GQ|Equatorial Guinea|Africa/Malabo GR|Greece|Europe/Athens
+GS|South Georgia|Atlantic/South_Georgia GT|Guatemala|America/Guatemala GU|Guam|Pacific/Guam GW|Guinea-Bissau|Africa/Bissau
+GY|Guyana|America/Guyana HK|Hong Kong|Asia/Hong_Kong HN|Honduras|America/Tegucigalpa HR|Croatia|Europe/Zagreb
+HT|Haiti|America/Port-au-Prince HU|Hungary|Europe/Budapest ID|Indonesia|Asia/Jakarta IE|Ireland|Europe/Dublin IL|Israel|Asia/Jerusalem
+IM|Isle of Man|Europe/Isle_of_Man IN|India|Asia/Kolkata IO|British Indian Ocean Territory|Indian/Chagos IQ|Iraq|Asia/Baghdad
+IR|Iran|Asia/Tehran IS|Iceland|Atlantic/Reykjavik IT|Italy|Europe/Rome JE|Jersey|Europe/Jersey JM|Jamaica|America/Jamaica
+JO|Jordan|Asia/Amman JP|Japan|Asia/Tokyo KE|Kenya|Africa/Nairobi KG|Kyrgyzstan|Asia/Bishkek KH|Cambodia|Asia/Phnom_Penh
+KI|Kiribati|Pacific/Tarawa KM|Comoros|Indian/Comoro KN|Saint Kitts and Nevis|America/St_Kitts KP|North Korea|Asia/Pyongyang
+KR|South Korea|Asia/Seoul KW|Kuwait|Asia/Kuwait KY|Cayman Islands|America/Cayman KZ|Kazakhstan|Asia/Almaty LA|Laos|Asia/Vientiane
+LB|Lebanon|Asia/Beirut LC|Saint Lucia|America/St_Lucia LI|Liechtenstein|Europe/Vaduz LK|Sri Lanka|Asia/Colombo
+LR|Liberia|Africa/Monrovia LS|Lesotho|Africa/Maseru LT|Lithuania|Europe/Vilnius LU|Luxembourg|Europe/Luxembourg LV|Latvia|Europe/Riga
+LY|Libya|Africa/Tripoli MA|Morocco|Africa/Casablanca MC|Monaco|Europe/Monaco MD|Moldova|Europe/Chisinau ME|Montenegro|Europe/Podgorica
+MF|Saint Martin|America/Marigot MG|Madagascar|Indian/Antananarivo MH|Marshall Islands|Pacific/Majuro MK|North Macedonia|Europe/Skopje
+ML|Mali|Africa/Bamako MM|Myanmar|Asia/Yangon MN|Mongolia|Asia/Ulaanbaatar MO|Macau|Asia/Macau MP|Northern Mariana Islands|Pacific/Saipan
+MQ|Martinique|America/Martinique MR|Mauritania|Africa/Nouakchott MS|Montserrat|America/Montserrat MT|Malta|Europe/Malta
+MU|Mauritius|Indian/Mauritius MV|Maldives|Indian/Maldives MW|Malawi|Africa/Blantyre MX|Mexico|America/Mexico_City
+MY|Malaysia|Asia/Kuala_Lumpur MZ|Mozambique|Africa/Maputo NA|Namibia|Africa/Windhoek NC|New Caledonia|Pacific/Noumea
+NE|Niger|Africa/Niamey NF|Norfolk Island|Pacific/Norfolk NG|Nigeria|Africa/Lagos NI|Nicaragua|America/Managua
+NL|Netherlands|Europe/Amsterdam NO|Norway|Europe/Oslo NP|Nepal|Asia/Kathmandu NR|Nauru|Pacific/Nauru NU|Niue|Pacific/Niue
+NZ|New Zealand|Pacific/Auckland OM|Oman|Asia/Muscat PA|Panama|America/Panama PE|Peru|America/Lima PF|French Polynesia|Pacific/Tahiti
+PG|Papua New Guinea|Pacific/Port_Moresby PH|Philippines|Asia/Manila PK|Pakistan|Asia/Karachi PL|Poland|Europe/Warsaw
+PM|Saint Pierre and Miquelon|America/Miquelon PN|Pitcairn Islands|Pacific/Pitcairn PR|Puerto Rico|America/Puerto_Rico
+PS|Palestine|Asia/Hebron PT|Portugal|Europe/Lisbon PW|Palau|Pacific/Palau PY|Paraguay|America/Asuncion QA|Qatar|Asia/Qatar
+RE|Réunion|Indian/Reunion RO|Romania|Europe/Bucharest RS|Serbia|Europe/Belgrade RU|Russia|Europe/Moscow RW|Rwanda|Africa/Kigali
+SA|Saudi Arabia|Asia/Riyadh SB|Solomon Islands|Pacific/Guadalcanal SC|Seychelles|Indian/Mahe SD|Sudan|Africa/Khartoum
+SE|Sweden|Europe/Stockholm SG|Singapore|Asia/Singapore SH|Saint Helena|Atlantic/St_Helena SI|Slovenia|Europe/Ljubljana
+SJ|Svalbard|Arctic/Longyearbyen SK|Slovakia|Europe/Bratislava SL|Sierra Leone|Africa/Freetown SM|San Marino|Europe/San_Marino
+SN|Senegal|Africa/Dakar SO|Somalia|Africa/Mogadishu SR|Suriname|America/Paramaribo SS|South Sudan|Africa/Juba
+ST|São Tomé and Príncipe|Africa/Sao_Tome SV|El Salvador|America/El_Salvador SX|Sint Maarten|America/Lower_Princes
+SY|Syria|Asia/Damascus SZ|Eswatini|Africa/Mbabane TC|Turks and Caicos Islands|America/Grand_Turk TD|Chad|Africa/Ndjamena
+TG|Togo|Africa/Lome TH|Thailand|Asia/Bangkok TJ|Tajikistan|Asia/Dushanbe TK|Tokelau|Pacific/Fakaofo TL|Timor-Leste|Asia/Dili
+TM|Turkmenistan|Asia/Ashgabat TN|Tunisia|Africa/Tunis TO|Tonga|Pacific/Tongatapu TR|Turkey|Europe/Istanbul
+TT|Trinidad and Tobago|America/Port_of_Spain TV|Tuvalu|Pacific/Funafuti TW|Taiwan|Asia/Taipei TZ|Tanzania|Africa/Dar_es_Salaam
+UA|Ukraine|Europe/Kiev UG|Uganda|Africa/Kampala UM|U.S. Minor Outlying Islands|Pacific/Wake US|United States|America/New_York
+UY|Uruguay|America/Montevideo UZ|Uzbekistan|Asia/Tashkent VA|Vatican City|Europe/Vatican VC|Saint Vincent and the Grenadines|America/St_Vincent
+VE|Venezuela|America/Caracas VG|British Virgin Islands|America/Tortola VI|U.S. Virgin Islands|America/St_Thomas VN|Vietnam|Asia/Ho_Chi_Minh
+VU|Vanuatu|Pacific/Efate WF|Wallis and Futuna|Pacific/Wallis WS|Samoa|Pacific/Apia XK|Kosovo|Europe/Belgrade YE|Yemen|Asia/Aden
+YT|Mayotte|Indian/Mayotte ZA|South Africa|Africa/Johannesburg ZM|Zambia|Africa/Lusaka ZW|Zimbabwe|Africa/Harare`;
+
+// ISO country code -> [display name, time zone]
+const COUNTRIES = {};
+for (const row of COUNTRY_TABLE.trim().split(/\s+(?=[A-Z]{2}\|)/)) {
+  const [code, name, tz] = row.split('|');
+  COUNTRIES[code] = [name, tz];
+}
+
+// Other names people (and hotel addresses) use for a country.
+const COUNTRY_ALIASES = {
+  usa: 'US', 'united states of america': 'US', america: 'US', uk: 'GB', 'great britain': 'GB', britain: 'GB',
+  england: 'GB', scotland: 'GB', wales: 'GB', 'northern ireland': 'GB', czechia: 'CZ', turkiye: 'TR',
+  korea: 'KR', 'republic of korea': 'KR', holland: 'NL', uae: 'AE', emirates: 'AE', 'ivory coast': 'CI',
+  'cabo verde': 'CV', 'east timor': 'TL', burma: 'MM', macedonia: 'MK', swaziland: 'SZ', drc: 'CD',
+  'dr congo': 'CD', 'congo-kinshasa': 'CD', congo: 'CG', 'congo-brazzaville': 'CG', vatican: 'VA', 'holy see': 'VA',
+  'russian federation': 'RU', 'viet nam': 'VN', 'lao pdr': 'LA', 'st lucia': 'LC', 'st kitts and nevis': 'KN',
+  'st vincent and the grenadines': 'VC', 'st barts': 'BL', 'st barths': 'BL', 'st martin': 'MF', 'st maarten': 'SX',
+  bosnia: 'BA', trinidad: 'TT', tobago: 'TT', 'cayman': 'KY', 'turks and caicos': 'TC', bvi: 'VG', usvi: 'VI',
+  tahiti: 'PF', bonaire: 'BQ', 'sao tome': 'ST', 'falklands': 'FK', 'faroes': 'FO', 'mainland china': 'CN', prc: 'CN',
 };
+
+// US state names -> postal codes ("Boise, Idaho" means ID).
+const US_STATE_NAMES = {
+  alabama: 'AL', alaska: 'AK', arizona: 'AZ', arkansas: 'AR', california: 'CA', colorado: 'CO', connecticut: 'CT',
+  delaware: 'DE', 'district of columbia': 'DC', 'washington dc': 'DC', florida: 'FL', georgia: 'GA', hawaii: 'HI',
+  idaho: 'ID', illinois: 'IL', indiana: 'IN', iowa: 'IA', kansas: 'KS', kentucky: 'KY', louisiana: 'LA', maine: 'ME',
+  maryland: 'MD', massachusetts: 'MA', michigan: 'MI', minnesota: 'MN', mississippi: 'MS', missouri: 'MO', montana: 'MT',
+  nebraska: 'NE', nevada: 'NV', 'new hampshire': 'NH', 'new jersey': 'NJ', 'new mexico': 'NM', 'new york': 'NY',
+  'north carolina': 'NC', 'north dakota': 'ND', ohio: 'OH', oklahoma: 'OK', oregon: 'OR', pennsylvania: 'PA',
+  'rhode island': 'RI', 'south carolina': 'SC', 'south dakota': 'SD', tennessee: 'TN', texas: 'TX', utah: 'UT',
+  vermont: 'VT', virginia: 'VA', washington: 'WA', 'west virginia': 'WV', wisconsin: 'WI', wyoming: 'WY',
+};
+// "Georgia" is a US state unless the city is in the country.
+const GEORGIA_COUNTRY_CITIES = ['tbilisi', 'batumi', 'kutaisi', 'gudauri', 'kazbegi', 'stepantsminda', 'mestia', 'sighnaghi', 'telavi'];
+
+// Cities whose time zone differs from their country's representative one.
+const CITY_TZ = {
+  vancouver: 'America/Vancouver', victoria: 'America/Vancouver', whistler: 'America/Vancouver', calgary: 'America/Edmonton',
+  edmonton: 'America/Edmonton', banff: 'America/Edmonton', winnipeg: 'America/Winnipeg', regina: 'America/Regina',
+  halifax: 'America/Halifax', "st. john's": 'America/St_Johns', perth: 'Australia/Perth', adelaide: 'Australia/Adelaide',
+  darwin: 'Australia/Darwin', brisbane: 'Australia/Brisbane', cairns: 'Australia/Brisbane', 'gold coast': 'Australia/Brisbane',
+  melbourne: 'Australia/Melbourne', hobart: 'Australia/Hobart', cancun: 'America/Cancun', 'playa del carmen': 'America/Cancun',
+  tulum: 'America/Cancun', tijuana: 'America/Tijuana', 'los cabos': 'America/Mazatlan', 'cabo san lucas': 'America/Mazatlan',
+  'san jose del cabo': 'America/Mazatlan', 'la paz': 'America/Mazatlan', manaus: 'America/Manaus', bali: 'Asia/Makassar',
+  denpasar: 'Asia/Makassar', ubud: 'Asia/Makassar', lombok: 'Asia/Makassar', vladivostok: 'Asia/Vladivostok',
+  yekaterinburg: 'Asia/Yekaterinburg', novosibirsk: 'Asia/Novosibirsk', tenerife: 'Atlantic/Canary', 'las palmas': 'Atlantic/Canary',
+  'gran canaria': 'Atlantic/Canary', lanzarote: 'Atlantic/Canary', funchal: 'Atlantic/Madeira', madeira: 'Atlantic/Madeira',
+  'ponta delgada': 'Atlantic/Azores', azores: 'Atlantic/Azores', galapagos: 'Pacific/Galapagos', 'easter island': 'Pacific/Easter',
+  'el paso': DEN, pensacola: CHI, 'sioux falls': CHI, 'rapid city': DEN, boise: 'America/Boise', 'coeur d\'alene': LA,
+  almaty: 'Asia/Almaty', astana: 'Asia/Almaty', nuuk: 'America/Nuuk', 'santa cruz de la sierra': 'America/La_Paz',
+};
+
+/** Lowercase, no accents or periods, no leading "the": "Côte d'Ivoire" -> "cote d'ivoire". */
+function normalizeName(s) {
+  return String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/\./g, '').replace(/^the\s+/, '').replace(/\s+/g, ' ').trim();
+}
+
+const COUNTRY_BY_NAME = {};
+for (const code of Object.keys(COUNTRIES)) COUNTRY_BY_NAME[normalizeName(COUNTRIES[code][0])] = code;
+for (const alias of Object.keys(COUNTRY_ALIASES)) COUNTRY_BY_NAME[normalizeName(alias)] = COUNTRY_ALIASES[alias];
+
 
 const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
 
@@ -195,10 +340,14 @@ function airportPlace(code) {
   return { city: a.city, region: a.region, tz: a.tz, airport: code };
 }
 
+/** [display name, time zone] for a country name or alias, or null. */
 function countryByName(name) {
-  const n = (name || '').trim().toLowerCase();
-  return Object.values(COUNTRIES).find((c) => c[0].toLowerCase() === n) || null;
+  const code = COUNTRY_BY_NAME[normalizeName(name)];
+  return code ? COUNTRIES[code] : null;
 }
+
+/** The time zone for a city: its own if it differs from its country's, else the given fallback. */
+const cityTz = (city, fallback) => CITY_TZ[normalizeName(city)] || fallback || null;
 
 const placeLabel = (p) => [p.city, p.region].filter(Boolean).join(', ');
 
@@ -243,13 +392,15 @@ function parseAddress(location) {
     const sm = /^([A-Z]{2})(?:\s+\d{5}(?:-\d{4})?)?$/i.exec(parts[parts.length - 1] || '');
     if (!sm || parts.length < 2) return null;
     const region = sm[1].toUpperCase();
-    return { city: titleCaseIfShouting(parts[parts.length - 2]), region, tz: US_STATE_TZ[region] || null };
+    const city = titleCaseIfShouting(parts[parts.length - 2]);
+    return { city, region, tz: cityTz(city, US_STATE_TZ[region]) };
   }
 
   const country = COUNTRIES[lastUp] || countryByName(last);
   // Drop postcode-ish tokens: "10117 Berlin" -> "Berlin", "London SW1A 1AA" -> "London"
   const city = (parts[parts.length - 1] || '').split(/\s+/).filter((t) => !/\d/.test(t)).join(' ');
-  return { city: titleCaseIfShouting(city) || null, region: country ? country[0] : titleCaseIfShouting(last), tz: country ? country[1] : null };
+  const cityName = titleCaseIfShouting(city) || null;
+  return { city: cityName, region: country ? country[0] : titleCaseIfShouting(last), tz: cityTz(cityName, country && country[1]) };
 }
 
 /** "Stay: <hotel name>, <city> Confirmation <code>": the place comes from the address; the hotel name is dropped. */
@@ -295,14 +446,23 @@ function parseMarker(title) {
   if (!parts.length) return null;
 
   let city = parts.length > 1 ? parts.slice(0, -1).join(', ') : null;
-  let region = parts.length > 1 ? parts[parts.length - 1] : '';
-  if (region.length === 2) region = region.toUpperCase();
-  if (parts.length === 1) {
-    if (countryByName(parts[0])) region = parts[0];
-    else city = parts[0];
+  let region = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+  let tz = null;
+  const state = US_STATE_TZ[region.toUpperCase()] && region.length === 2 ? region.toUpperCase() : US_STATE_NAMES[normalizeName(region)];
+  const georgiaCountry = normalizeName(region) === 'georgia' && GEORGIA_COUNTRY_CITIES.includes(normalizeName(city));
+  if (state && !georgiaCountry) {
+    region = state; // "ID" or "Idaho" -> "ID"
+    tz = US_STATE_TZ[state];
+  } else if (countryByName(region)) {
+    tz = countryByName(region)[1]; // keeps the name as typed: "Scotland", "Czechia"
+  } else if (parts.length === 1) {
+    // "📍 Chicago": a bare city. Borrow state/country and time zone from a known airport city.
+    city = parts[0];
+    const known = Object.values(AIRPORTS).find((x) => normalizeName(x.city) === normalizeName(city));
+    region = known ? known.region : '';
+    tz = known ? known.tz : null;
   }
-  const tz = US_STATE_TZ[region] || (countryByName(region) || [])[1] || null;
-  return { place: { city, region, tz }, tags };
+  return { place: { city, region, tz: cityTz(city, tz) }, tags };
 }
 
 /** Working Location events are inaccurate and never used. */
@@ -451,12 +611,13 @@ function tripPlaceLabel(places) {
   return labels.length <= 3 ? joinAnd(labels) : `${labels.slice(0, 2).join(', ')} & ${labels.length - 2} more`;
 }
 
+/** Metros a trip touches: by airport, or by city name within the metro's states (if it lists them). */
 function matchMetros(places, config) {
   return Object.keys(config.metros || {}).filter((id) => {
     const m = config.metros[id];
-    const cities = (m.cities || []).map((c) => c.toLowerCase());
-    return places.some((p) =>
-      (p.city && cities.includes(p.city.toLowerCase())) || (p.airport && (m.airports || []).includes(p.airport)));
+    const cities = (m.cities || []).map(normalizeName);
+    return places.some((p) => (p.airport && (m.airports || []).includes(p.airport))
+      || (p.city && cities.includes(normalizeName(p.city)) && (!m.regions || m.regions.includes(p.region))));
   });
 }
 
@@ -509,7 +670,8 @@ function buildStatus(input) {
   if (!here || isHomePlace(here, config)) here = homePlace(config);
 
   const currentTrip = trips.find((t) => t.startMs <= now && now < t.endMs);
-  const todayOut = { city: here.city || '', region: here.region || '', tz: here.tz || homeTz, work: !!(currentTrip && currentTrip.work) };
+  // tz is null when we can't tell (an unrecognized place): the page then leaves out the local time.
+  const todayOut = { city: here.city || '', region: here.region || '', tz: here.tz || null, work: !!(currentTrip && currentTrip.work) };
 
   // Travel-day note: a journey that is underway or leaves today (origin's local date).
   const finalLeg = (f) => { while (f.connectsTo) f = f.connectsTo; return f; };
