@@ -198,9 +198,26 @@ describe('Apps Script wrapper', () => {
     const out = plain(gas.run('checkMarkers')).join('\n');
     expect(out).toContain('3 event(s)');
     expect(out).toContain('"📍 Stockton, CA [personal]" → OK: Stockton, CA [personal]');
-    expect(out).toContain('"📌 Chicago, IL" → ignored: must start with 📍 (round pushpin). It starts with "📌" (U+1F4CC)');
+    expect(out).toContain('"📌 Chicago, IL" → OK: Chicago, IL');
     expect(out).toContain('"busy" → title hidden');
+    expect(out).toMatch(/Sat Oct 24 2026 → Sun Oct 25 2026: "📍 Stockton/); // shows the whole span
     expect(gas.calls.fetch).toHaveLength(0);
+  });
+
+  it('on the marker calendar no 📍 is needed; on the aiEDU calendar it still is', () => {
+    const day = (title, start, end) => ({ title, start, end, allDay: true });
+    const gas = appsScript({ markers: [
+      day('Boise, ID', '2026-10-27', '2026-10-30'),
+      day('Budapest, Hungary [work]', '2026-11-02', '2026-11-05'),
+      day('📍 Melville, NY', '2026-11-25', '2026-11-27'),
+    ] });
+    const trips = plain(gas.run('dryRun')).trips.map((t) => [t.start, t.end, t.place, t.work]);
+    expect(trips).toContainEqual(['2026-10-27', '2026-10-29', 'Boise, ID', false]);
+    expect(trips).toContainEqual(['2026-11-02', '2026-11-04', 'Budapest, Hungary', true]);
+    expect(trips).toContainEqual(['2026-11-25', '2026-11-26', 'Melville, NY', false]);
+    // A "Boise, ID"-style title on the work calendar is just a meeting, never a location.
+    const work = plain(gas.sandbox.readEvents_({ getEvents: () => [fakeEvent(day('Boise, ID', '2026-10-27', '2026-10-28'))] }, new Date(0), new Date(NOW + 365 * DAY), false));
+    expect(work).toEqual([]);
   });
 
   it('checkMarkers spots a missing or misspelled MARKER_CALENDAR_ID', () => {

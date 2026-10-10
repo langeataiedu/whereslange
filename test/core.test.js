@@ -144,6 +144,25 @@ describe('merge: rules', () => {
     expect(s.trips).toEqual([{ start: '2026-10-10', end: '2026-10-11', place: 'Los Angeles, CA', work: false, metros: ['la'] }]);
   });
 
+  it('multi-stop trips: countries when abroad, short list at home', () => {
+    const at = (events) => statusAt('2026-10-01T19:00:00Z', { events, emails: [] }).trips.map((t) => t.place);
+    expect(at([
+      allDay('📍 Budapest, Hungary', '2026-11-10', '2026-11-13'),
+      allDay('📍 Berlin, Germany', '2026-11-13', '2026-11-16'),
+      allDay('📍 Munich, Germany', '2026-11-16', '2026-11-18'),
+    ])).toEqual(['Hungary & Germany']);
+    expect(at([
+      allDay('📍 Boston, MA', '2026-10-10', '2026-10-12'),
+      allDay('📍 New York, NY', '2026-10-12', '2026-10-14'),
+    ])).toEqual(['Boston, MA & New York, NY']);
+    expect(at([
+      allDay('📍 Boston, MA', '2026-10-10', '2026-10-11'),
+      allDay('📍 Providence, RI', '2026-10-11', '2026-10-12'),
+      allDay('📍 New Haven, CT', '2026-10-12', '2026-10-13'),
+      allDay('📍 New York, NY', '2026-10-13', '2026-10-14'),
+    ])).toEqual(['Boston, MA, Providence, RI & 2 more']);
+  });
+
   it('[work] marker adds the star to a manual trip', () => {
     const s = statusAt('2026-10-01T19:00:00Z', { events: [allDay('📍 Berlin, Germany [work]', '2026-11-10', '2026-11-21')], emails: [] });
     expect(s.trips).toEqual([{ start: '2026-11-10', end: '2026-11-20', place: 'Berlin, Germany', work: true, metros: [] }]);

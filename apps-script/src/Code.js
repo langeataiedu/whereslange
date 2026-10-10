@@ -20,7 +20,8 @@ const LOOKBACK_DAYS = 14; // so a trip already underway is visible
 const READ_AHEAD_DAYS = 62; // status covers 60 days ahead
 const NAVAN_EMAIL_QUERY = 'from:no-reply@navan.com newer_than:120d';
 const MAX_EMAILS = 500;
-// Only these events are read; meetings and everything else on the calendar are skipped.
+// On the aiEDU calendar only these events are read; meetings and everything else are skipped.
+// (Every event on the dedicated "Where's Langey" calendar is a location marker; no 📍 needed.)
 const RELEVANT_TITLE = /^\s*(?:Flight:|Stay:|\u{1F4CD})/u;
 
 /** Time-driven trigger target: build the status and send it to the Worker. */
@@ -63,17 +64,16 @@ function checkMarkers() {
   lines.push(`Calendar "${cal.getName()}": ${events.length} event(s) between ${start.toDateString()} and ${end.toDateString()}.`);
   for (const ev of events) {
     const title = ev.getTitle();
-    const when = ev.isAllDayEvent() ? `${ev.getAllDayStartDate().toDateString()} (all day)` : ev.getStartTime().toString();
+    const when = ev.isAllDayEvent()
+      ? `${ev.getAllDayStartDate().toDateString()} → ${new Date(ev.getAllDayEndDate().getTime() - DAY).toDateString()}`
+      : `${ev.getStartTime().toString()} → ${ev.getEndTime().toString()}`;
     let verdict;
     if (/^\s*busy\s*$/i.test(title) || !title) verdict = 'title hidden: the calendar is shared as free/busy only. Share it with "See all event details".';
-    else if (!RELEVANT_TITLE.test(title)) {
-      const first = Array.from(title.trim())[0] || '';
-      verdict = `ignored: must start with 📍 (round pushpin). It starts with "${first}" (U+${first.codePointAt(0).toString(16).toUpperCase()}).`;
-    } else {
-      const m = parseMarker(title);
-      verdict = m && (m.place.city || m.place.region)
-        ? `OK: ${[m.place.city, m.place.region].filter(Boolean).join(', ')}${m.tags.work ? ' [work]' : ''}${m.tags.personal ? ' [personal]' : ''}`
-        : 'ignored: no place after the 📍';
+    else {
+      const m = parseMarker(asMarkerTitle_(title));
+      verdict = !m || !(m.place.city || m.place.region) ? 'ignored: no place in the title'
+        : `OK: ${[m.place.city, m.place.region].filter(Boolean).join(', ')}${m.tags.work ? ' [work]' : ''}${m.tags.personal ? ' [personal]' : ''}`
+          + (m.place.tz ? '' : ' (time zone unknown: local time will show in Pacific time)');
     }
     lines.push(`- ${when}: "${title}" → ${verdict}`);
   }
@@ -101,30 +101,33 @@ function buildStatusNow_(props) {
   const start = new Date(now.getTime() - LOOKBACK_DAYS * DAY);
   const end = new Date(now.getTime() + READ_AHEAD_DAYS * DAY);
 
-  const calendars = [CalendarApp.getDefaultCalendar()];
+  const events = readEvents_(CalendarApp.getDefaultCalendar(), start, end, false);
   if (props.MARKER_CALENDAR_ID) {
     const markers = CalendarApp.getCalendarById(props.MARKER_CALENDAR_ID);
     if (!markers) throw new Error('MARKER_CALENDAR_ID: calendar not found, or not shared with this account');
-    calendars.push(markers);
+    events.push(...readEvents_(markers, start, end, true));
   }
 
   return buildStatus({
     config: CONFIG,
-    events: calendars.flatMap((cal) => readEvents_(cal, start, end)),
+    events,
     emails: readNavanEmails_(),
     now: now.getTime(),
   });
 }
 
-/** Calendar events in the shape core.js expects (see the top of core.js). */
-function readEvents_(calendar, start, end) {
+/**
+ * Calendar events in the shape core.js expects (see the top of core.js). On the marker calendar
+ * every event is a location ("Boise, ID" works as well as "📍 Boise, ID").
+ */
+function readEvents_(calendar, start, end, isMarkerCalendar) {
   const tz = Session.getScriptTimeZone();
   return calendar.getEvents(start, end)
-    .filter((ev) => RELEVANT_TITLE.test(ev.getTitle()))
+    .filter((ev) => isMarkerCalendar || RELEVANT_TITLE.test(ev.getTitle()))
     .map((ev) => {
       const allDay = ev.isAllDayEvent();
       return {
-        title: ev.getTitle(),
+        title: isMarkerCalendar ? asMarkerTitle_(ev.getTitle()) : ev.getTitle(),
         location: ev.getLocation(),
         allDay,
         start: allDay ? Utilities.formatDate(ev.getAllDayStartDate(), tz, 'yyyy-MM-dd') : ev.getStartTime().toISOString(),
@@ -132,6 +135,11 @@ function readEvents_(calendar, start, end) {
         eventType: String(ev.getEventType()) === 'WORKING_LOCATION' ? 'workingLocation' : 'default',
       };
     });
+}
+
+/** "Boise, ID" / "📌 Boise, ID" / "📍 Boise, ID" → "📍 Boise, ID" (the marker format core.js reads). */
+function asMarkerTitle_(title) {
+  return `\u{1F4CD} ${String(title).trim().replace(/^[^\p{L}\p{N}[]+/u, '')}`;
 }
 
 /** Navan email subjects and when they arrived (Gmail API, read-only, headers only). */

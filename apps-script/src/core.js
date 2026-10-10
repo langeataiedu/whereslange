@@ -113,7 +113,22 @@ const COUNTRIES = {
   IN: ['India', 'Asia/Kolkata'], PH: ['Philippines', 'Asia/Manila'], AU: ['Australia', 'Australia/Sydney'],
   NZ: ['New Zealand', 'Pacific/Auckland'], AE: ['United Arab Emirates', 'Asia/Dubai'],
   IL: ['Israel', 'Asia/Jerusalem'], BR: ['Brazil', 'America/Sao_Paulo'], ZA: ['South Africa', 'Africa/Johannesburg'],
-  KE: ['Kenya', 'Africa/Nairobi'],
+  KE: ['Kenya', 'Africa/Nairobi'], HU: ['Hungary', 'Europe/Budapest'], MA: ['Morocco', 'Africa/Casablanca'],
+  CZ: ['Czech Republic', 'Europe/Prague'], SK: ['Slovakia', 'Europe/Bratislava'], RO: ['Romania', 'Europe/Bucharest'],
+  BG: ['Bulgaria', 'Europe/Sofia'], HR: ['Croatia', 'Europe/Zagreb'], SI: ['Slovenia', 'Europe/Ljubljana'],
+  RS: ['Serbia', 'Europe/Belgrade'], UA: ['Ukraine', 'Europe/Kyiv'], EE: ['Estonia', 'Europe/Tallinn'],
+  LV: ['Latvia', 'Europe/Riga'], LT: ['Lithuania', 'Europe/Vilnius'], IS: ['Iceland', 'Atlantic/Reykjavik'],
+  LU: ['Luxembourg', 'Europe/Luxembourg'], MT: ['Malta', 'Europe/Malta'], CY: ['Cyprus', 'Asia/Nicosia'],
+  TR: ['Turkey', 'Europe/Istanbul'], EG: ['Egypt', 'Africa/Cairo'], NG: ['Nigeria', 'Africa/Lagos'],
+  GH: ['Ghana', 'Africa/Accra'], RW: ['Rwanda', 'Africa/Kigali'], TZ: ['Tanzania', 'Africa/Dar_es_Salaam'],
+  SA: ['Saudi Arabia', 'Asia/Riyadh'], QA: ['Qatar', 'Asia/Qatar'], JO: ['Jordan', 'Asia/Amman'],
+  PK: ['Pakistan', 'Asia/Karachi'], BD: ['Bangladesh', 'Asia/Dhaka'], LK: ['Sri Lanka', 'Asia/Colombo'],
+  NP: ['Nepal', 'Asia/Kathmandu'], TH: ['Thailand', 'Asia/Bangkok'], VN: ['Vietnam', 'Asia/Ho_Chi_Minh'],
+  KH: ['Cambodia', 'Asia/Phnom_Penh'], MY: ['Malaysia', 'Asia/Kuala_Lumpur'], ID: ['Indonesia', 'Asia/Jakarta'],
+  TW: ['Taiwan', 'Asia/Taipei'], HK: ['Hong Kong', 'Asia/Hong_Kong'], AR: ['Argentina', 'America/Argentina/Buenos_Aires'],
+  CL: ['Chile', 'America/Santiago'], CO: ['Colombia', 'America/Bogota'], PE: ['Peru', 'America/Lima'],
+  EC: ['Ecuador', 'America/Guayaquil'], CR: ['Costa Rica', 'America/Costa_Rica'], PA: ['Panama', 'America/Panama'],
+  GT: ['Guatemala', 'America/Guatemala'], DO: ['Dominican Republic', 'America/Santo_Domingo'], JM: ['Jamaica', 'America/Jamaica'],
 };
 
 const MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
@@ -425,12 +440,15 @@ function buildTimeline(events, flights, config) {
 // ---------------------------------------------------------------------------
 // Trips
 
+const joinAnd = (items) => (items.length <= 1 ? items[0] || '' : `${items.slice(0, -1).join(', ')} & ${items[items.length - 1]}`);
+
 function tripPlaceLabel(places) {
   const labels = Array.from(new Set(places.map(placeLabel)));
   if (labels.length <= 1) return labels[0] || 'Traveling';
+  // Entirely abroad: name the countries ("Germany", "Hungary & Germany").
   const regions = Array.from(new Set(places.map((p) => p.region)));
-  if (regions.length === 1 && regions[0] && !US_STATE_TZ[regions[0]]) return regions[0]; // e.g. "Germany"
-  return `${labels.slice(0, -1).join(', ')} & ${labels[labels.length - 1]}`;
+  if (regions.every((r) => r && !US_STATE_TZ[r])) return joinAnd(regions);
+  return labels.length <= 3 ? joinAnd(labels) : `${labels.slice(0, 2).join(', ')} & ${labels.length - 2} more`;
 }
 
 function matchMetros(places, config) {
