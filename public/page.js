@@ -37,8 +37,9 @@
     const today = el('section', 'card today', null,
       el('p', 'eyebrow', away ? 'Today · Greetings from' : 'Today'),
       el('p', 'place', vm.today.place, star(vm.today.work && away)),
-      vm.today.sub && el('p', 'sub', vm.today.sub),
-      vm.today.localTime && el('p', 'local-time', vm.today.localTime),
+      // One line: "At home | Lange's local time: 12:00 pm" (either part may be absent)
+      (vm.today.sub || vm.today.localTime) && el('p', 'sub', vm.today.sub && vm.today.localTime ? `${vm.today.sub} | ` : vm.today.sub,
+        vm.today.localTime && el('span', 'nowrap', vm.today.localTime)),
       vm.pill && el('p', 'pill', vm.pill),
       stamp);
 
