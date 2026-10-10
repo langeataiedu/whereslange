@@ -36,6 +36,52 @@ function dryRun() {
   return status;
 }
 
+/**
+ * Troubleshooting: logs what the script sees in the marker calendar and why each event counts or
+ * doesn't. Sends nothing.
+ */
+function checkMarkers() {
+  const props = scriptProperties_();
+  const lines = [];
+  if (!props.MARKER_CALENDAR_ID) {
+    const near = Object.keys(props).filter((k) => /marker|calendar/i.test(k) && k !== 'MARKER_CALENDAR_ID');
+    lines.push('MARKER_CALENDAR_ID is not set, so the marker calendar is skipped.');
+    if (near.length) lines.push(`Found a similar property name instead: ${near.join(', ')}. It must be exactly MARKER_CALENDAR_ID.`);
+    console.log(lines.join('\n'));
+    return lines;
+  }
+  const cal = CalendarApp.getCalendarById(props.MARKER_CALENDAR_ID);
+  if (!cal) {
+    lines.push('MARKER_CALENDAR_ID is set, but this account can\'t open that calendar. Check the ID, and that it\'s shared with this account ("See all event details").');
+    console.log(lines.join('\n'));
+    return lines;
+  }
+  const now = new Date();
+  const start = new Date(now.getTime() - LOOKBACK_DAYS * DAY);
+  const end = new Date(now.getTime() + READ_AHEAD_DAYS * DAY);
+  const events = cal.getEvents(start, end);
+  lines.push(`Calendar "${cal.getName()}": ${events.length} event(s) between ${start.toDateString()} and ${end.toDateString()}.`);
+  for (const ev of events) {
+    const title = ev.getTitle();
+    const when = ev.isAllDayEvent() ? `${ev.getAllDayStartDate().toDateString()} (all day)` : ev.getStartTime().toString();
+    let verdict;
+    if (/^\s*busy\s*$/i.test(title) || !title) verdict = 'title hidden: the calendar is shared as free/busy only. Share it with "See all event details".';
+    else if (!RELEVANT_TITLE.test(title)) {
+      const first = Array.from(title.trim())[0] || '';
+      verdict = `ignored: must start with 📍 (round pushpin). It starts with "${first}" (U+${first.codePointAt(0).toString(16).toUpperCase()}).`;
+    } else {
+      const m = parseMarker(title);
+      verdict = m && (m.place.city || m.place.region)
+        ? `OK: ${[m.place.city, m.place.region].filter(Boolean).join(', ')}${m.tags.work ? ' [work]' : ''}${m.tags.personal ? ' [personal]' : ''}`
+        : 'ignored: no place after the 📍';
+    }
+    lines.push(`- ${when}: "${title}" → ${verdict}`);
+  }
+  if (!events.length) lines.push('No events in that window. Markers must fall between 2 weeks ago and ~2 months ahead.');
+  console.log(lines.join('\n'));
+  return lines;
+}
+
 /** Runs updateStatus every 30 minutes (replaces any existing trigger for it). */
 function installTrigger() {
   for (const t of ScriptApp.getProjectTriggers()) {

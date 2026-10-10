@@ -38,6 +38,7 @@ function fakeEvent(e) {
 
 function fakeCalendar(events, calls) {
   return {
+    getName: () => "Where's Langey",
     getEvents(start, end) {
       calls.push([start.getTime(), end.getTime()]);
       return events.map(fakeEvent).filter((ev) => ev.getStartTime() < end && ev.getEndTime() > start);
@@ -46,7 +47,7 @@ function fakeCalendar(events, calls) {
 }
 
 /** Loads the Apps Script files into a fresh sandbox with fake Google services. */
-function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true } = {}) {
+function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null } = {}) {
   const isMarker = (e) => e.title.startsWith('📍');
   const meeting = { title: 'Lunch with Sam', location: 'Some Cafe', start: '2026-10-08T19:00:00Z', end: '2026-10-08T20:00:00Z', allDay: false };
   const calls = { getEvents: [], fetch: [], gmailGets: 0, triggers: [] };
@@ -67,7 +68,7 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
     PropertiesService: { getScriptProperties: () => ({ getProperties: () => ({ ...props }) }) },
     CalendarApp: {
       getDefaultCalendar: () => fakeCalendar([...fixture.events.filter((e) => !isMarker(e)), meeting], calls.getEvents),
-      getCalendarById: (id) => (markerCalendar && id === PROPS.MARKER_CALENDAR_ID ? fakeCalendar(fixture.events.filter(isMarker), calls.getEvents) : null),
+      getCalendarById: (id) => (markerCalendar && id === PROPS.MARKER_CALENDAR_ID ? fakeCalendar(markers || fixture.events.filter(isMarker), calls.getEvents) : null),
     },
     Gmail: {
       Users: {
@@ -185,6 +186,29 @@ describe('Apps Script wrapper', () => {
     const trips = plain(gas.run('dryRun')).trips.map((t) => t.place);
     expect(trips).not.toContain('Stockton, CA'); // that trip only exists as a marker
     expect(trips).toContain('Germany');
+  });
+
+  it('checkMarkers explains why each marker counts or not', () => {
+    const day = (title, start, end) => ({ title, start, end, allDay: true });
+    const gas = appsScript({ markers: [
+      day('📍 Stockton, CA [personal]', '2026-10-24', '2026-10-26'),
+      day('📌 Chicago, IL', '2026-10-15', '2026-10-17'),
+      day('busy', '2026-10-20', '2026-10-21'),
+    ] });
+    const out = plain(gas.run('checkMarkers')).join('\n');
+    expect(out).toContain('3 event(s)');
+    expect(out).toContain('"📍 Stockton, CA [personal]" → OK: Stockton, CA [personal]');
+    expect(out).toContain('"📌 Chicago, IL" → ignored: must start with 📍 (round pushpin). It starts with "📌" (U+1F4CC)');
+    expect(out).toContain('"busy" → title hidden');
+    expect(gas.calls.fetch).toHaveLength(0);
+  });
+
+  it('checkMarkers spots a missing or misspelled MARKER_CALENDAR_ID', () => {
+    const { MARKER_CALENDAR_ID, ...rest } = PROPS;
+    const gas = appsScript({ props: { ...rest, MARKER_CALENDAR: 'x@group.calendar.google.com' } });
+    const out = plain(gas.run('checkMarkers')).join('\n');
+    expect(out).toContain('MARKER_CALENDAR_ID is not set');
+    expect(out).toContain('similar property name instead: MARKER_CALENDAR');
   });
 
   it('installTrigger replaces the old 30-minute trigger and leaves others alone', () => {
