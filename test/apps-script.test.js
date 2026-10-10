@@ -160,6 +160,13 @@ describe('Apps Script wrapper', () => {
     expect(() => gas.run('updateStatus')).toThrow('Worker update failed: HTTP 403');
   });
 
+  it('trims stray spaces and line breaks from pasted script properties', () => {
+    const gas = appsScript({ props: { ...PROPS, ACCESS_CLIENT_SECRET: ' client-secret\n', UPDATE_SECRET: 'update-secret ' } });
+    gas.run('updateStatus');
+    expect(gas.calls.fetch[0].opts.headers['CF-Access-Client-Secret']).toBe('client-secret');
+    expect(gas.calls.fetch[0].opts.headers.Authorization).toBe('Bearer update-secret');
+  });
+
   it('refuses to send when a script property is missing', () => {
     const { UPDATE_SECRET, ...rest } = PROPS;
     const gas = appsScript({ props: rest });

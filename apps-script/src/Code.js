@@ -25,13 +25,13 @@ const RELEVANT_TITLE = /^\s*(?:Flight:|Stay:|\u{1F4CD})/u;
 
 /** Time-driven trigger target: build the status and send it to the Worker. */
 function updateStatus() {
-  const props = PropertiesService.getScriptProperties().getProperties();
+  const props = scriptProperties_();
   postStatus_(buildStatusNow_(props), props);
 }
 
 /** Builds the status and logs it without sending anything. */
 function dryRun() {
-  const status = buildStatusNow_(PropertiesService.getScriptProperties().getProperties());
+  const status = buildStatusNow_(scriptProperties_());
   console.log(JSON.stringify(status, null, 2));
   return status;
 }
@@ -42,6 +42,12 @@ function installTrigger() {
     if (t.getHandlerFunction() === 'updateStatus') ScriptApp.deleteTrigger(t);
   }
   ScriptApp.newTrigger('updateStatus').timeBased().everyMinutes(30).create();
+}
+
+/** Script properties, trimmed (pasted values often pick up a stray space or line break). */
+function scriptProperties_() {
+  const props = PropertiesService.getScriptProperties().getProperties();
+  return Object.fromEntries(Object.entries(props).map(([k, v]) => [k, String(v).trim()]));
 }
 
 function buildStatusNow_(props) {
@@ -114,7 +120,12 @@ function postStatus_(status, props) {
     followRedirects: false,
     muteHttpExceptions: true,
   });
-  if (res.getResponseCode() !== 200) {
-    throw new Error(`Worker update failed: HTTP ${res.getResponseCode()} ${res.getContentText().slice(0, 200)}`);
+  const code = res.getResponseCode();
+  if (code !== 200) {
+    const body = res.getContentText();
+    // Cloudflare Access answers with an HTML page; the Worker answers with JSON.
+    const who = /cloudflare access/i.test(body) ? 'Cloudflare Access refused the service token (check ACCESS_CLIENT_ID/SECRET and the Service Auth policy)'
+      : body.slice(0, 200);
+    throw new Error(`Worker update failed: HTTP ${code}: ${who}`);
   }
 }
