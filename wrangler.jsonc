@@ -14,8 +14,8 @@
     { "binding": "STATUS", "id": "a21d9cc78e7e446ab8de7560a52ac0cf" }
   ],
   "vars": {
-    // Filled in during Access setup (README): your team domain and the Access application's AUD tag.
-    "ACCESS_TEAM_DOMAIN": "",
-    "ACCESS_AUD": ""
+    // Cloudflare Access: the team domain and the Where's Lange application's AUD tag (not secret).
+    "ACCESS_TEAM_DOMAIN": "https://crimson-cake-6b80.cloudflareaccess.com",
+    "ACCESS_AUD": "b1bb011753509e50f7a89d574842d6c9b68ee84139f2875deabda8cbdab52dcb"
   }
 }
