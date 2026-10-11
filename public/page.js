@@ -57,7 +57,7 @@
     const upcoming = el('section', 'upcoming', null,
       el('h2', 'eyebrow', 'Coming up'),
       trips.length ? el('ul', 'trips', null, ...trips) : el('p', 'empty', 'Nothing planned for the next two months.'),
-      vm.showKey && el('p', 'key', '★ = work trip, so Lange is less free to meet up'));
+      vm.showKey && el('p', 'key', '★ = potential work trip, so Lange may be less free to meet up'));
 
     // Why this page exists (a note from Lange, before the Text/Call buttons)
     const rithm = link('rithm', 'The Rithm Project', 'https://www.therithmproject.org/');
