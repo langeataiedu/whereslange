@@ -65,11 +65,13 @@
     rithm.rel = 'noopener noreferrer';
     const why = el('section', 'card why', null,
       el('h2', 'eyebrow', 'Why this page'),
-      el('p', null, "I'm on the road a lot, and I don't want distance to mean drifting apart. So I used AI to build "
-        + "this little window into where I am, and to nudge us toward real time together: a call when I land, "
-        + "dinner when I'm in your town."),
-      el('p', null, "It's inspired by ", rithm, ', which works on building human connection in an age of AI: '
-        + 'using technology to bring people closer, not to stand in for each other.'),
+      el('p', null, "I travel a lot, and I don't want distance to mean drifting apart. So I used AI to build "
+        + 'this little window into where I am, and to nudge us toward real time together: a call when I land, '
+        + "dinner when I'm nearby. It pulls data from my calendar and travel reservations, and summarizes it for "
+        + 'you! (And reminds you the local time wherever in the world I am \u{1F570}\uFE0F).'),
+      el('p', null, 'This vibecoded app is inspired by the work of ', rithm, ' (an aiEDU partner), which works on '
+        + 'building human connection in an age of AI: using technology to bring people closer, not to stand in '
+        + 'for each other.'),
       el('p', 'signoff', '— Lange'));
 
     const actions = el('nav', 'actions', null, link('btn btn-text', 'Text Lange', vm.textHref), link('btn btn-call', 'Call', vm.callHref));
