@@ -4,8 +4,8 @@
   "name": "wheres-lange",
   "main": "worker/src/index.ts",
   "compatibility_date": "2025-09-01",
-  // Old address, kept on only until the Apps Script posts to whereslange.com. Then set to false.
-  "workers_dev": true,
+  // The old wheres-lange.wheres-langey.workers.dev address is off: whereslange.com is the only way in.
+  "workers_dev": false,
   "preview_urls": false,
   // whereslange.com (and www) serve this Worker. Both sit behind the same Cloudflare Access application.
   "routes": [
