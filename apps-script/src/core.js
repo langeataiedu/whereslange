@@ -526,12 +526,21 @@ function collectFlights(events, emails, config) {
 
 const PRIO = { ground: 1, stay: 2, marker: 3, air: 4 };
 
+/** Is an airport close enough to a place that landing there means arriving at it? (Same time zone.) */
+function isNear(airportPlace, place) {
+  if (!place || !airportPlace) return true;
+  if (airportPlace.tz && place.tz) return airportPlace.tz === place.tz;
+  return !!place.region && airportPlace.region === place.region;
+}
+
 /**
  * A stay/marker says where Lange is over whole days; flights say exactly when he moves.
- * Start at the first journey that lands inside the span; end at the first journey that leaves.
+ * Start at the first journey that lands inside the span near the place (a flight landing somewhere
+ * else, like Newark→Sacramento during a Melville stay, doesn't count); end at the first journey that
+ * leaves, from anywhere.
  */
-function clipToFlights(start, end, flights) {
-  const arrival = flights.find((f) => !f.connectsTo && f.arr >= start && f.arr < end);
+function clipToFlights(start, end, flights, place) {
+  const arrival = flights.find((f) => !f.connectsTo && f.arr >= start && f.arr < end && isNear(f.toPlace, place));
   const s = arrival ? arrival.arr : start;
   const departure = flights.find((f) => f !== arrival && !f.isConnection && f.dep >= s && f.dep < end);
   return [s, departure ? departure.dep : end];
@@ -570,7 +579,7 @@ function buildTimeline(events, flights, config) {
     // Markers mean the dates Lange typed, in home time; hotel dates are local to the hotel.
     const [s, e] = eventSpan(ev, marker ? homeTz : stay.tz || homeTz);
     if (marker && marker.tags.personal) personal.push([s, e]);
-    const [cs, ce] = clipToFlights(s, e, flights);
+    const [cs, ce] = clipToFlights(s, e, flights, marker ? marker.place : stay);
     if (marker) add(cs, ce, PRIO.marker, marker.place, marker.tags.work);
     else add(cs, ce, PRIO.stay, stay, true);
   }
@@ -621,32 +630,66 @@ function matchMetros(places, config) {
   });
 }
 
+/** Trip rows: one per US state; everywhere abroad together ("Hungary, Germany & Morocco"). */
+const legKey = (p) => (p && US_STATE_TZ[p.region] ? `US:${p.region}` : 'abroad');
+
+/**
+ * runs: continuous time away from home (for "home on" and "where is he now").
+ * rows: the "Coming up" list. Each run is split where the leg changes, so Melville, NY and a next-day
+ * Sacramento, CA are separate rows. In the air belongs to wherever the flight is going. A changeover
+ * day (left Morocco, arrived in New York) shows on both rows.
+ */
 function groupTrips(timeline, config) {
   const homeTz = config.home.tz;
-  const groups = [];
+  const runs = [];
   for (const iv of timeline.intervals) {
     if (iv.place && isHomePlace(iv.place, config)) continue;
-    const g = groups[groups.length - 1];
-    if (g && g.endMs === iv.start) {
-      g.endMs = iv.end;
-      g.intervals.push(iv);
+    const r = runs[runs.length - 1];
+    if (r && r.endMs === iv.start) {
+      r.endMs = iv.end;
+      r.intervals.push(iv);
     } else {
-      groups.push({ startMs: iv.start, endMs: iv.end, intervals: [iv] });
+      runs.push({ startMs: iv.start, endMs: iv.end, intervals: [iv] });
     }
   }
-  return groups.map((g) => {
+
+  const rows = [];
+  for (const run of runs) {
+    const ivs = run.intervals;
+    ivs.forEach((iv, i) => {
+      const anchor = iv.place || (ivs.slice(i + 1).find((x) => x.place) || ivs.slice(0, i).reverse().find((x) => x.place) || {}).place;
+      const key = legKey(anchor);
+      const row = rows[rows.length - 1];
+      if (row && row.run === run && row.key === key) {
+        row.endMs = iv.end;
+        row.intervals.push(iv);
+      } else {
+        rows.push({ run, key, startMs: iv.start, endMs: iv.end, intervals: [iv] });
+      }
+    });
+  }
+
+  const summarize = (g, end) => {
     const places = g.intervals.filter((iv) => iv.place).map((iv) => iv.place);
     const personal = timeline.personal.some(([s, e]) => s < g.endMs && e > g.startMs);
     return {
       startMs: g.startMs,
       endMs: g.endMs,
       start: localDate(g.startMs, homeTz),
-      end: localDate(g.endMs - 1, homeTz),
+      end,
       place: tripPlaceLabel(places),
       work: !personal && g.intervals.some((iv) => iv.work),
       metros: matchMetros(places, config),
     };
-  });
+  };
+  return {
+    runs: runs.map((r) => summarize(r, localDate(r.endMs - 1, homeTz))),
+    rows: rows.map((r, i) => {
+      const next = rows[i + 1];
+      const end = next && next.run === r.run ? localDate(next.startMs, homeTz) : localDate(r.endMs - 1, homeTz);
+      return summarize(r, end);
+    }),
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -659,7 +702,7 @@ function buildStatus(input) {
   const events = (input.events || []).filter((ev) => !isIgnoredEvent(ev));
   const flights = collectFlights(events, input.emails, config);
   const timeline = buildTimeline(events, flights, config);
-  const trips = groupTrips(timeline, config);
+  const { runs, rows: trips } = groupTrips(timeline, config);
   const today = localDate(now, homeTz);
   const intervalAt = (t) => timeline.intervals.findIndex((x) => x.start <= t && t < x.end);
 
@@ -670,6 +713,7 @@ function buildStatus(input) {
   if (!here || isHomePlace(here, config)) here = homePlace(config);
 
   const currentTrip = trips.find((t) => t.startMs <= now && now < t.endMs);
+  const currentRun = runs.find((r) => r.startMs <= now && now < r.endMs);
   // tz is null when we can't tell (an unrecognized place): the page then leaves out the local time.
   const todayOut = { city: here.city || '', region: here.region || '', tz: here.tz || null, work: !!(currentTrip && currentTrip.work) };
 
@@ -691,7 +735,7 @@ function buildStatus(input) {
 
   // Back home: end of the trip he's on (or leaving on today). Home "on" a date = home by 6 pm;
   // a 9:55 pm landing reads as "home tomorrow".
-  const homeTrip = currentTrip || trips.find((t) => t.start === today && t.startMs > now);
+  const homeTrip = currentRun || runs.find((r) => r.start === today && r.startMs > now);
   let homeOn = null;
   if (homeTrip) {
     const endDate = localDate(homeTrip.endMs, homeTz);

@@ -70,8 +70,8 @@ Builds a continuous timeline, then reads "today", "home on" and trips off it.
 - **Lookback**: the Apps Script wrapper should read events from about 2 weeks back, so a trip that's already underway shows up.
 - **Connections** under 6 hours are one journey: no layover city, and the travel-day note names the final stop.
 - **After landing** somewhere other than home, Lange is there until the next flight out. If the next flight leaves from somewhere else, or there is none, he's there only for the arrival day; after that the default (home) applies.
-- **Hotel stays and manual markers** set the place for their dates, trimmed to start when a flight lands and end when one leaves. Priority: in the air > manual marker > hotel > flight arrival > home.
-- **Trips** are runs of away time. A trip runs from the departure date to the landing date, in Pacific time. A 3+ city trip within one foreign country shows just the country (e.g. "Germany").
+- **Hotel stays and manual markers** set the place for their dates, trimmed to start when a flight lands nearby (same time zone) and end when any flight leaves. Priority: in the air > manual marker > hotel > flight arrival > home.
+- **Trips** ("Coming up" rows) run from the departure date to the landing date, in Pacific time. Back-to-back travel is split into a row per US state, while everywhere abroad stays together ("Hungary, Germany & Morocco"). A changeover day shows on both rows. "Back in SF" uses the whole stretch away.
 - **Home on**: the trip's landing date if he lands before 6 pm Pacific, otherwise the next day.
 - **Work star**: Navan bookings are work, a `[work]` marker adds the star, and a `[personal]` marker removes it from any trip it overlaps. Markers have no other tags.
 

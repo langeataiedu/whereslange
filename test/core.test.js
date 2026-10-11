@@ -176,23 +176,53 @@ describe('merge: rules', () => {
     expect(metros('📍 Lawrence, KS')).toEqual([]);
   });
 
-  it('multi-stop trips: countries when abroad, short list at home', () => {
+  it("Lange's November: abroad, then Melville, then the Newark→Sacramento flight (each its own row)", () => {
+    const s = statusAt('2026-10-11T19:00:00Z', {
+      events: [
+        allDay('📍 Budapest, Hungary', '2026-11-10', '2026-11-13'),
+        allDay('📍 Berlin, Germany', '2026-11-13', '2026-11-19'),
+        allDay('📍 Marrakesh, Morocco', '2026-11-19', '2026-11-26'),
+        allDay('📍 Melville, NY', '2026-11-25', '2026-11-29'),
+      ],
+      emails: [{ subject: 'Your Nov 28 EWR–SMF flight is confirmed [JKL012]', date: '2026-10-01T16:00:00Z' }],
+    });
+    expect(s.trips.map((t) => [t.start, t.end, t.place])).toEqual([
+      ['2026-11-10', '2026-11-25', 'Hungary, Germany & Morocco'],
+      ['2026-11-25', '2026-11-28', 'Melville, NY'],
+      ['2026-11-28', '2026-11-28', 'Sacramento, CA'],
+    ]);
+  });
+
+  it('a flight landing somewhere else does not move the start of a stay', () => {
+    // Stay in Melville from Nov 25; a flight lands in Sacramento on Nov 28. Melville still starts Nov 25.
+    const s = statusAt('2026-11-26T19:00:00Z', {
+      events: [allDay('📍 Melville, NY', '2026-11-25', '2026-11-29')],
+      emails: [{ subject: 'Your Nov 28 EWR–SMF flight is confirmed [JKL012]', date: '2026-10-01T16:00:00Z' }],
+    });
+    expect(s.today).toMatchObject({ city: 'Melville', region: 'NY' });
+    expect(s.homeOn).toBe('2026-11-29');
+  });
+
+  it('multi-stop trips: countries together abroad; a row per US state', () => {
     const at = (events) => statusAt('2026-10-01T19:00:00Z', { events, emails: [] }).trips.map((t) => t.place);
     expect(at([
       allDay('📍 Budapest, Hungary', '2026-11-10', '2026-11-13'),
       allDay('📍 Berlin, Germany', '2026-11-13', '2026-11-16'),
       allDay('📍 Munich, Germany', '2026-11-16', '2026-11-18'),
     ])).toEqual(['Hungary & Germany']);
-    expect(at([
+    // Different states: a row each (the changeover day shows on both).
+    const rows = statusAt('2026-10-01T19:00:00Z', { events: [
       allDay('📍 Boston, MA', '2026-10-10', '2026-10-12'),
       allDay('📍 New York, NY', '2026-10-12', '2026-10-14'),
-    ])).toEqual(['Boston, MA & New York, NY']);
+    ], emails: [] }).trips.map((t) => [t.start, t.end, t.place]);
+    expect(rows).toEqual([['2026-10-10', '2026-10-12', 'Boston, MA'], ['2026-10-12', '2026-10-13', 'New York, NY']]);
+    // Several cities in one state: one row, shortened past three.
     expect(at([
-      allDay('📍 Boston, MA', '2026-10-10', '2026-10-11'),
-      allDay('📍 Providence, RI', '2026-10-11', '2026-10-12'),
-      allDay('📍 New Haven, CT', '2026-10-12', '2026-10-13'),
-      allDay('📍 New York, NY', '2026-10-13', '2026-10-14'),
-    ])).toEqual(['Boston, MA, Providence, RI & 2 more']);
+      allDay('📍 Buffalo, NY', '2026-10-10', '2026-10-11'),
+      allDay('📍 Rochester, NY', '2026-10-11', '2026-10-12'),
+      allDay('📍 Ithaca, NY', '2026-10-12', '2026-10-13'),
+      allDay('📍 Albany, NY', '2026-10-13', '2026-10-14'),
+    ])).toEqual(['Buffalo, NY, Rochester, NY & 2 more']);
   });
 
   it('[work] marker adds the star to a manual trip', () => {
