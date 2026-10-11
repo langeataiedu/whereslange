@@ -4,6 +4,14 @@
   "name": "wheres-lange",
   "main": "worker/src/index.ts",
   "compatibility_date": "2025-09-01",
+  // Old address, kept on only until the Apps Script posts to whereslange.com. Then set to false.
+  "workers_dev": true,
+  "preview_urls": false,
+  // whereslange.com (and www) serve this Worker. Both sit behind the same Cloudflare Access application.
+  "routes": [
+    { "pattern": "whereslange.com", "custom_domain": true },
+    { "pattern": "www.whereslange.com", "custom_domain": true }
+  ],
   "assets": {
     "directory": "public",
     "binding": "ASSETS",
