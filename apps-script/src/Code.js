@@ -123,7 +123,8 @@ function buildStatusNow_(props) {
 // Fun fact about today's city: a sentence from Wikipedia + a recent New York Times article.
 
 const FACT_CACHE_SECONDS = 6 * 3600; // look each city up at most every 6 hours
-const WIKI_API = 'https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageprops&ppprop=disambiguation'
+// (UrlFetchApp rejects a raw "|" in a URL, so it's written as %7C.)
+const WIKI_API = 'https://en.wikipedia.org/w/api.php?action=query&prop=extracts%7Cpageprops&ppprop=disambiguation'
   + '&exintro=1&explaintext=1&redirects=1&format=json&formatversion=2&titles=';
 const NYT_SEARCH_API = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
 const FUN_SENTENCE = /\b(first|oldest|largest|longest|tallest|biggest|highest|known as|nicknamed|nickname|home to|famous|founded|named after|birthplace|invented|world.s)\b/i;

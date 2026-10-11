@@ -95,6 +95,8 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
     CacheService: { getScriptCache: () => ({ get: (k) => cache.get(k) ?? null, put: (k, v) => cache.set(k, v) }) },
     UrlFetchApp: {
       fetch: (url, opts) => {
+        // Like the real UrlFetchApp: characters that must be percent-encoded are an "Invalid argument".
+        if (/[|\s"<>{}\\^`]/.test(url)) throw new Error(`Invalid argument: ${url}`);
         if (/wikipedia\.org|nytimes\.com/.test(url)) {
           calls.lookups.push(url);
           const body = /wikipedia/.test(url)
