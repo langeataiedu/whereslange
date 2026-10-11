@@ -155,8 +155,16 @@ describe('your-city highlight', () => {
   it("each viewer gets their own name for the greeting (and nobody else's)", async () => {
     const mom = (await (await asViewer('mom@example.com', '/api/status')).json()) as { viewer: { name: string } };
     const friend = (await (await asViewer('friend@example.com', '/api/status')).json()) as { viewer: object };
+    expect(mom.viewer).toEqual({ name: 'Mom' }); // nickname
+    expect(friend.viewer).toEqual({ name: 'Jason' }); // no nickname: first name
+  });
+
+  it('without a nickname, the greeting falls back to the name', async () => {
+    const config = JSON.parse(env.VIEWERS);
+    delete config.viewers['mom@example.com'].nickname;
+    env.VIEWERS = JSON.stringify(config);
+    const mom = (await (await asViewer('mom@example.com', '/api/status')).json()) as { viewer: { name: string } };
     expect(mom.viewer).toEqual({ name: 'Mary' });
-    expect(friend.viewer).toEqual({ name: 'Jason' });
   });
 
   it('an SF friend gets no highlight', async () => {

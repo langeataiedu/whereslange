@@ -7,10 +7,12 @@
   "viewers": {
     "mom@example.com": {
       "name": "Mary",
+      "nickname": "Mom",
       "metro": "stockton"
     },
     "dad@example.com": {
       "name": "Ruperto",
+      "nickname": "Dad",
       "metro": "stockton"
     },
     "friend@example.com": {

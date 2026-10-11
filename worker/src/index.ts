@@ -19,7 +19,7 @@ export interface Env extends AccessConfig {
 interface ViewerConfig {
   home: { city: string; region: string };
   phone: string;
-  viewers: Record<string, { name: string; metro: string | null }>;
+  viewers: Record<string, { name: string; nickname?: string; metro: string | null }>; // nickname: what the greeting calls them
   metros: Record<string, { label: string }>;
 }
 
@@ -112,7 +112,7 @@ export default {
       return json({
         status: JSON.parse(raw),
         highlight: metro ? { metro: viewer.metro, label: metro.label } : null,
-        viewer: { name: viewer.name },
+        viewer: { name: viewer.nickname || viewer.name },
         home: config.home,
         phone: config.phone,
       });
