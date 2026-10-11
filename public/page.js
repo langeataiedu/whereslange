@@ -36,12 +36,22 @@
       : '<div><span>✈</span><small>AIR MAIL</small></div>';
 
     const away = !vm.today.isHome && !vm.today.inAir;
+
+    // Bottom of the postcard: where he sleeps tonight, his local time, a fun fact (each only if known).
+    const line = (label, ...value) => el('p', 'detail', null, el('span', 'label', label), ' ', ...value);
+    const external = (cls, text, href) => { const a = link(cls, text, href); a.target = '_blank'; a.rel = 'noopener noreferrer'; return a; };
+    const fact = vm.today.fact;
+    const details = el('div', 'details', null,
+      vm.today.sleeping && line("Where I'm sleeping tonight:", vm.today.sleeping),
+      vm.today.localTime && line("Lange's local time:", el('span', 'nowrap', vm.today.localTime)),
+      fact && line('Fun fact about this city:', `${fact.text} `,
+        el('span', 'sources', null, '(', external('src', 'Wikipedia', fact.wikiUrl), ' · ',
+          external('src', `NYT: ${fact.nytTitle}`, fact.nytUrl), ')')));
     const today = el('section', 'card today', null,
       el('p', 'eyebrow', away ? 'Today · Greetings from' : 'Today'),
       el('p', 'place', vm.today.place, star(vm.today.work && away)),
-      // One line: "At home | Lange's local time: 12:00 pm" (either part may be absent)
-      (vm.today.sub || vm.today.localTime) && el('p', 'sub', vm.today.sub && vm.today.localTime ? `${vm.today.sub} | ` : vm.today.sub,
-        vm.today.localTime && el('span', 'nowrap', vm.today.localTime)),
+      vm.today.sub && el('p', 'sub', vm.today.sub),
+      details,
       vm.pill && el('p', 'pill', vm.pill),
       stamp);
 

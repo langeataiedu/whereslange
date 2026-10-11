@@ -110,7 +110,7 @@ describe('merge: acceptance week Oct 5–8, 2026', () => {
 
   it('home on Oct 8', () => {
     const s = statusAt('2026-10-08T19:00:00Z');
-    expect(s.today).toEqual({ city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false });
+    expect(s.today).toEqual({ city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false, sleeping: 'At home' });
     expect(s.homeOn).toBeNull();
   });
 
@@ -269,9 +269,23 @@ describe('merge: rules', () => {
     expect(layover.today.city).toBe('San Francisco');
   });
 
+  it('where he sleeps tonight: hotel name, home, an overnight flight, or a marker\'s Location field', () => {
+    expect(statusAt('2026-10-06T19:00:00Z').today.sleeping).toBe('The Morrow Washington Dc');
+    expect(statusAt('2026-10-07T20:12:00Z').today.sleeping).toBe('At home'); // lands 9:55 pm
+    const redEye = statusAt('2026-10-20T19:00:00Z', { events: [
+      flight('Flight: SFO (UA1) to BOS Confirmation X', '2026-10-20T22:30:00-07:00', '2026-10-21T07:05:00-04:00'),
+    ], emails: [] });
+    expect(redEye.today.sleeping).toBe('Overnight flight');
+    const marker = (location) => statusAt('2026-10-24T19:00:00Z', { events: [
+      { title: '📍 Stockton, CA', location, start: '2026-10-24', end: '2026-10-26', allDay: true },
+    ], emails: [] }).today;
+    expect(marker("Mom & Dad's house").sleeping).toBe("Mom & Dad's house");
+    expect(marker('')).not.toHaveProperty('sleeping'); // unknown: the line is left out
+  });
+
   it('abroad: city + country; landing home by 6 pm counts as home that day', () => {
     const s = statusAt('2026-11-12T19:00:00Z');
-    expect(s.today).toEqual({ city: 'Berlin', region: 'Germany', tz: 'Europe/Berlin', work: true });
+    expect(s.today).toEqual({ city: 'Berlin', region: 'Germany', tz: 'Europe/Berlin', work: true, sleeping: 'Hotel Adlon Kempinski' });
     expect(s.homeOn).toBe('2026-11-20'); // lands SFO 4:05 pm
   });
 
@@ -279,7 +293,7 @@ describe('merge: rules', () => {
     const s = statusAt('2026-10-12T19:00:00Z', { events: [], emails: [] });
     expect(s).toEqual({
       updated: '2026-10-12T19:00:00Z',
-      today: { city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false },
+      today: { city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false, sleeping: 'At home' },
       homeOn: null,
       trips: [],
     });
@@ -291,11 +305,13 @@ describe('merge: rules', () => {
   });
 });
 
-describe('privacy: the status is schema fields only', () => {
-  const TODAY_KEYS = ['city', 'region', 'tz', 'work', 'transit'];
+describe('privacy: schema fields only; hotel names only as tonight\'s lodging; never addresses or codes', () => {
+  const TODAY_KEYS = ['city', 'region', 'tz', 'work', 'transit', 'sleeping'];
+  // Hotel names may appear, but only as "where he's sleeping tonight".
+  const HOTELS = ['Morrow', 'Adlon', 'Kempinski', 'Bayerischer'];
   const SECRETS = [
     'ABC123', 'DEF456', 'GHI789', 'JKL012', 'MNO345', '0000000000', '1111111111', '2222222222',
-    'Morrow', 'Curio', 'Hilton', 'Adlon', 'Kempinski', 'Bayerischer', '222 M', 'Linden', 'Promenadeplatz',
+    'Curio', 'Hilton', '222 M', 'Linden', 'Promenadeplatz', 'STREET', '20002', '10117', '80333',
     'UA2386', 'UA 2386', 'UA1234', 'LH455', 'LH454', 'DCA', 'EWR', 'SMF', 'FRA',
   ];
 
@@ -310,5 +326,7 @@ describe('privacy: the status is schema fields only', () => {
     for (const t of s.trips) expect(Object.keys(t).sort()).toEqual(['end', 'metros', 'place', 'start', 'work']);
     const json = JSON.stringify(s);
     for (const secret of SECRETS) expect(json).not.toContain(secret);
+    const withoutSleeping = JSON.stringify({ ...s, today: { ...s.today, sleeping: undefined } });
+    for (const hotel of HOTELS) expect(withoutSleeping).not.toContain(hotel);
   });
 });

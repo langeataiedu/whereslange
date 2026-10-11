@@ -11,6 +11,8 @@
  *   ACCESS_CLIENT_SECRET  Cloudflare Access service token secret
  *   UPDATE_SECRET         same value as the Worker's UPDATE_SECRET
  *   MARKER_CALENDAR_ID    ID of the "Where's Langey" calendar (optional until it exists)
+ *   NYT_API_KEY           New York Times Article Search API key (optional: without it, the page
+ *                         links to an NYT search for "36 Hours in <city>" instead of an article)
  *
  * First time: run dryRun() and check the log, then run installTrigger().
  * If a run fails, Apps Script emails a failure notice, and the page shows "may be out of date".
@@ -108,12 +110,107 @@ function buildStatusNow_(props) {
     events.push(...readEvents_(markers, start, end, true));
   }
 
-  return buildStatus({
+  const status = buildStatus({
     config: CONFIG,
     events,
     emails: readNavanEmails_(),
     now: now.getTime(),
   });
+  return addCityFact_(status, props, now.getTime());
+}
+
+// ---------------------------------------------------------------------------
+// Fun fact about today's city: a sentence from Wikipedia + a recent New York Times article.
+
+const FACT_CACHE_SECONDS = 6 * 3600; // look each city up at most every 6 hours
+const WIKI_API = 'https://en.wikipedia.org/w/api.php?action=query&prop=extracts|pageprops&ppprop=disambiguation'
+  + '&exintro=1&explaintext=1&redirects=1&format=json&formatversion=2&titles=';
+const NYT_SEARCH_API = 'https://api.nytimes.com/svc/search/v2/articlesearch.json';
+const FUN_SENTENCE = /\b(first|oldest|largest|longest|tallest|biggest|highest|known as|nicknamed|nickname|home to|famous|founded|named after|birthplace|invented|world.s)\b/i;
+// Census-style sentences aren't fun facts.
+const DRY_SENTENCE = /\b(population|census|inhabitants|county seat|square (miles|kilometers)|metropolitan statistical|is located|is a (city|town|hamlet|village|census))\b/i;
+
+/** Adds today.fact. Never breaks the update: if anything goes wrong, the page just has no fact. */
+function addCityFact_(status, props, now) {
+  try {
+    const fact = cityFact_(status.today, props, now);
+    if (fact) status.today.fact = fact;
+  } catch (e) {
+    console.log(`Fun fact skipped: ${e.message}`);
+  }
+  return status;
+}
+
+function cityFact_(today, props, now) {
+  if (!today.city && !today.region) return null;
+  const cache = CacheService.getScriptCache();
+  const key = `fact:${today.city}|${today.region}`;
+  let found = JSON.parse(cache.get(key) || 'null');
+  if (!found) {
+    found = { wiki: wikipediaSentences_(today), nyt: nytArticle_(today, props, now) };
+    cache.put(key, JSON.stringify(found), FACT_CACHE_SECONDS);
+  }
+  if (!found.wiki || !found.wiki.sentences.length) return null;
+  const sentences = found.wiki.sentences;
+  return {
+    text: sentences[Math.floor(now / DAY) % sentences.length], // a different one each day
+    wikiUrl: found.wiki.url,
+    nytTitle: found.nyt.title,
+    nytUrl: found.nyt.url,
+  };
+}
+
+/** Wikipedia article names to try: "Melville, New York", "Washington, D.C.", "Budapest"... */
+function wikipediaTitles_({ city, region }) {
+  if (!city) return [region];
+  if (region === 'DC') return ['Washington, D.C.'];
+  const state = Object.keys(US_STATE_NAMES).find((n) => US_STATE_NAMES[n] === region && n !== 'washington dc');
+  if (state) return [`${city}, ${state.replace(/\b\w/g, (c) => c.toUpperCase())}`, city];
+  return region ? [city, `${city}, ${region}`] : [city];
+}
+
+/** The introduction of the city's Wikipedia article, as candidate fun facts (most fun-fact-like first). */
+function wikipediaSentences_(today) {
+  for (const title of wikipediaTitles_(today)) {
+    const res = UrlFetchApp.fetch(WIKI_API + encodeURIComponent(title), {
+      muteHttpExceptions: true,
+      headers: { 'Api-User-Agent': 'WheresLange/1.0 (family travel page)' },
+    });
+    if (res.getResponseCode() !== 200) continue;
+    const page = ((JSON.parse(res.getContentText()).query || {}).pages || [])[0];
+    if (!page || page.missing || !page.extract || (page.pageprops && 'disambiguation' in page.pageprops)) continue;
+    return { url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.title.replace(/ /g, '_'))}`, sentences: funSentences_(page.extract) };
+  }
+  return null;
+}
+
+function funSentences_(extract) {
+  // Split at sentence ends, but not after an initial ("Robert F. Stockton").
+  const all = extract.replace(/\s+/g, ' ').trim().split(/(?<=[a-z0-9)"”][.!?])\s+(?=[A-Z"“(])/)
+    .filter((t) => t.length >= 40 && t.length <= 260 && !DRY_SENTENCE.test(t));
+  const rest = all.length > 1 ? all.slice(1) : all; // the first sentence is usually "X is a city in Y"
+  const fun = rest.filter((t) => FUN_SENTENCE.test(t));
+  return (fun.length ? fun : rest).slice(0, 6);
+}
+
+/** A recent (last 5 years) NYT article about the city, favoring the "36 Hours in…" travel column. */
+function nytArticle_(today, props, now) {
+  const where = today.city || today.region;
+  const search = {
+    title: `36 Hours in ${where}`,
+    url: `https://www.nytimes.com/search?query=${encodeURIComponent(`"36 Hours in ${where}"`)}`,
+  };
+  if (!props.NYT_API_KEY) return search;
+  const since = Utilities.formatDate(new Date(now - 5 * 365 * DAY), 'UTC', 'yyyyMMdd');
+  for (const q of [`"36 Hours in ${where}"`, `${where} travel`]) {
+    const res = UrlFetchApp.fetch(`${NYT_SEARCH_API}?q=${encodeURIComponent(q)}&begin_date=${since}&sort=relevance`
+      + `&api-key=${encodeURIComponent(props.NYT_API_KEY)}`, { muteHttpExceptions: true });
+    if (res.getResponseCode() !== 200) continue;
+    const docs = (JSON.parse(res.getContentText()).response || {}).docs || [];
+    const doc = docs.find((d) => d.web_url && /^https:\/\/www\.nytimes\.com\//.test(d.web_url) && d.headline && d.headline.main);
+    if (doc) return { title: doc.headline.main, url: doc.web_url };
+  }
+  return search;
 }
 
 /**

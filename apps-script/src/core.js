@@ -408,6 +408,12 @@ function parseStay(title, location) {
   return /^Stay:/i.test((title || '').trim()) ? parseAddress(location) : null;
 }
 
+/** The hotel's name from "Stay: The Morrow Washington Dc, Curio Collection By Hilton, Washington Confirmation 0000". */
+function stayName(title) {
+  const m = /^Stay:\s*(.+?)(?:\s+Confirmation\b.*)?$/i.exec((title || '').trim());
+  return m ? m[1].split(',')[0].trim().slice(0, 80) || null : null;
+}
+
 /**
  * Navan email subjects:
  *   "Your Nov 28 EWR–SMF flight is confirmed [ABC123]"
@@ -556,7 +562,8 @@ function buildTimeline(events, flights, config) {
   const homeTz = config.home.tz;
   const segs = [];
   const personal = [];
-  const add = (start, end, prio, place, work) => { if (end > start) segs.push({ start, end, prio, place, work }); };
+  // lodging: where he sleeps during this stretch (a hotel name, or a marker's Location field), if known.
+  const add = (start, end, prio, place, work, lodging = null) => { if (end > start) segs.push({ start, end, prio, place, work, lodging }); };
 
   flights.forEach((f, i) => {
     if (f.timeKnown) add(f.dep, f.arr, PRIO.air, null, true);
@@ -580,8 +587,8 @@ function buildTimeline(events, flights, config) {
     const [s, e] = eventSpan(ev, marker ? homeTz : stay.tz || homeTz);
     if (marker && marker.tags.personal) personal.push([s, e]);
     const [cs, ce] = clipToFlights(s, e, flights, marker ? marker.place : stay);
-    if (marker) add(cs, ce, PRIO.marker, marker.place, marker.tags.work);
-    else add(cs, ce, PRIO.stay, stay, true);
+    if (marker) add(cs, ce, PRIO.marker, marker.place, marker.tags.work, String(ev.location || '').trim().slice(0, 80) || null);
+    else add(cs, ce, PRIO.stay, stay, true, stayName(ev.title));
   }
 
   // Resolve overlaps: split at every boundary; highest priority wins (ties: later start).
@@ -595,12 +602,13 @@ function buildTimeline(events, flights, config) {
     }
     if (!best) continue;
     const prev = intervals[intervals.length - 1];
-    const same = prev && prev.end === a && (prev.place && best.place ? placeLabel(prev.place) === placeLabel(best.place) : prev.place === best.place);
+    const same = prev && prev.end === a && prev.lodging === best.lodging
+      && (prev.place && best.place ? placeLabel(prev.place) === placeLabel(best.place) : prev.place === best.place);
     if (same) {
       prev.end = b;
       prev.work = prev.work || best.work;
     } else {
-      intervals.push({ start: a, end: b, place: best.place, work: best.work });
+      intervals.push({ start: a, end: b, place: best.place, work: best.work, lodging: best.lodging });
     }
   }
   return { intervals, personal };
@@ -717,6 +725,15 @@ function buildStatus(input) {
   // tz is null when we can't tell (an unrecognized place): the page then leaves out the local time.
   const todayOut = { city: here.city || '', region: here.region || '', tz: here.tz || null, work: !!(currentTrip && currentTrip.work) };
 
+  // Where he sleeps tonight: wherever he is at 3 am (local to where he is now). Left out if unknown.
+  const nowTz = here.tz || homeTz;
+  const nightDate = zonedParts(now, nowTz).h < 5 ? localDate(now, nowTz) : addDays(localDate(now, nowTz), 1);
+  const nightIdx = intervalAt(zonedToUtc(nightDate, 3, 0, nowTz));
+  const night = nightIdx >= 0 ? timeline.intervals[nightIdx] : null;
+  const sleeping = !night || (night.place && isHomePlace(night.place, config)) ? 'At home'
+    : !night.place ? 'Overnight flight' : night.lodging;
+  if (sleeping) todayOut.sleeping = sleeping;
+
   // Travel-day note: a journey that is underway or leaves today (origin's local date).
   const finalLeg = (f) => { while (f.connectsTo) f = f.connectsTo; return f; };
   const tzOf = (code) => (AIRPORTS[code] && AIRPORTS[code].tz) || homeTz;
@@ -755,7 +772,7 @@ function buildStatus(input) {
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
-    buildStatus, collectFlights,
+    buildStatus, collectFlights, stayName, US_STATE_NAMES,
     parseCalendarFlight, parseStay, parseAddress, parseEmailSubject, parseMarker, inferFlightDate, isIgnoredEvent,
   };
 }

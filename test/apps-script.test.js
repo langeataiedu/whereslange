@@ -47,10 +47,16 @@ function fakeCalendar(events, calls) {
 }
 
 /** Loads the Apps Script files into a fresh sandbox with fake Google services. */
-function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null } = {}) {
+// Fake Wikipedia intro for whichever city is asked about, and a fake NYT search result.
+const WIKI_INTRO = 'Washington is the capital of the United States. "Washington" is from the name of George Washington, the first U.S. president. '
+  + 'The population was 689,545 at the 2020 census. The city is home to many national monuments and museums.';
+const NYT_DOC = { web_url: 'https://www.nytimes.com/2024/05/02/travel/things-to-do-washington-dc.html', headline: { main: '36 Hours in Washington, D.C.' } };
+
+function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null, lookupsFail = false } = {}) {
   const isMarker = (e) => e.title.startsWith('📍');
   const meeting = { title: 'Lunch with Sam', location: 'Some Cafe', start: '2026-10-08T19:00:00Z', end: '2026-10-08T20:00:00Z', allDay: false };
-  const calls = { getEvents: [], fetch: [], gmailGets: 0, triggers: [] };
+  const calls = { getEvents: [], fetch: [], lookups: [], gmailGets: 0, triggers: [] };
+  const cache = new Map();
 
   class FixedDate extends Date {
     constructor(...args) { if (args.length) super(...args); else super(NOW); }
@@ -63,7 +69,10 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
     Date: FixedDate,
     Session: { getScriptTimeZone: () => 'America/Los_Angeles' },
     Utilities: {
-      formatDate: (d, tz) => new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d),
+      formatDate: (d, tz, fmt) => {
+        const ymd = new Intl.DateTimeFormat('en-CA', { timeZone: tz, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
+        return fmt === 'yyyyMMdd' ? ymd.replace(/-/g, '') : ymd; // the two formats the script uses
+      },
     },
     PropertiesService: { getScriptProperties: () => ({ getProperties: () => ({ ...props }) }) },
     CalendarApp: {
@@ -83,8 +92,16 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
         },
       },
     },
+    CacheService: { getScriptCache: () => ({ get: (k) => cache.get(k) ?? null, put: (k, v) => cache.set(k, v) }) },
     UrlFetchApp: {
       fetch: (url, opts) => {
+        if (/wikipedia\.org|nytimes\.com/.test(url)) {
+          calls.lookups.push(url);
+          const body = /wikipedia/.test(url)
+            ? { query: { pages: [{ title: decodeURIComponent(url.split('titles=')[1]), extract: WIKI_INTRO }] } }
+            : { response: { docs: [NYT_DOC] } };
+          return { getResponseCode: () => (lookupsFail ? 500 : 200), getContentText: () => JSON.stringify(body) };
+        }
         calls.fetch.push({ url, opts });
         return { getResponseCode: () => responseCode, getContentText: () => (responseCode === 200 ? '{"ok":true}' : '{"error":"forbidden"}') };
       },
@@ -100,6 +117,7 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
   return { run: (fn) => sandbox[fn](), calls, sandbox };
 }
 
+const gas_dry = () => appsScript().run('dryRun');
 const expected = () => core.buildStatus({ config: CONFIG, events: fixture.events, emails: fixture.emails, now: NOW });
 const plain = (v) => JSON.parse(JSON.stringify(v)); // values from the sandbox's own realm
 
@@ -110,7 +128,9 @@ describe('Apps Script wrapper', () => {
     expect(gas.calls.fetch).toHaveLength(1);
     const { url, opts } = gas.calls.fetch[0];
     expect(url).toBe('https://wheres-lange.example.workers.dev/api/update');
-    expect(JSON.parse(opts.payload)).toEqual(expected());
+    const { fact, ...today } = JSON.parse(opts.payload).today;
+    expect({ ...JSON.parse(opts.payload), today }).toEqual(expected());
+    expect(fact.wikiUrl).toBe('https://en.wikipedia.org/wiki/Washington%2C_D.C.');
     expect(opts.headers).toEqual({
       'CF-Access-Client-Id': 'client-id.access',
       'CF-Access-Client-Secret': 'client-secret',
@@ -152,7 +172,9 @@ describe('Apps Script wrapper', () => {
 
   it('dryRun sends nothing', () => {
     const gas = appsScript();
-    expect(plain(gas.run('dryRun'))).toEqual(expected());
+    const status = plain(gas.run('dryRun'));
+    delete status.today.fact;
+    expect(status).toEqual(expected());
     expect(gas.calls.fetch).toHaveLength(0);
   });
 
@@ -234,6 +256,33 @@ describe('Apps Script wrapper', () => {
     const out = plain(gas.run('checkMarkers')).join('\n');
     expect(out).toContain('MARKER_CALENDAR_ID is not set');
     expect(out).toContain('similar property name instead: MARKER_CALENDAR');
+  });
+
+  it('adds a Wikipedia fun fact (not the census line) and an NYT search link when there is no NYT key', () => {
+    const fact = plain(gas_dry()).today.fact;
+    expect([
+      '"Washington" is from the name of George Washington, the first U.S. president.',
+      'The city is home to many national monuments and museums.',
+    ]).toContain(fact.text);
+    expect(fact.nytTitle).toBe('36 Hours in Washington');
+    expect(fact.nytUrl).toMatch(/^https:\/\/www\.nytimes\.com\/search\?query=/);
+  });
+
+  it('with an NYT key, links a recent NYT article; lookups are cached for 6 hours', () => {
+    const gas = appsScript({ props: { ...PROPS, NYT_API_KEY: 'nyt-key' } });
+    const fact = plain(gas.run('dryRun')).today.fact;
+    expect(fact).toMatchObject({ nytTitle: '36 Hours in Washington, D.C.', nytUrl: NYT_DOC.web_url });
+    expect(gas.calls.lookups.find((u) => u.includes('api.nytimes.com'))).toMatch(/begin_date=2021\d{4}/); // last 5 years
+    const before = gas.calls.lookups.length;
+    gas.run('dryRun');
+    expect(gas.calls.lookups.length).toBe(before); // second run: from the cache
+  });
+
+  it('if Wikipedia or NYT fails, the update still goes out, just without a fact', () => {
+    const gas = appsScript({ lookupsFail: true });
+    gas.run('updateStatus');
+    expect(gas.calls.fetch).toHaveLength(1);
+    expect(JSON.parse(gas.calls.fetch[0].opts.payload).today).not.toHaveProperty('fact');
   });
 
   it('installTrigger replaces the old 30-minute trigger and leaves others alone', () => {

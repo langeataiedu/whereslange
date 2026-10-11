@@ -17,9 +17,24 @@ const MOMENTS = {
   stale: ['Out of date (4½ hours old)', '2026-10-06T19:30:00Z', '2026-10-06T15:00:00Z'],
 };
 
+// Sample fun facts (the real ones come from the Apps Script's Wikipedia/NYT lookup).
+const nytSearch = (city) => `https://www.nytimes.com/search?query=${encodeURIComponent(`"36 Hours in ${city}"`)}`;
+const FACTS = {
+  Washington: { text: '"Washington" is from the name of George Washington, the first U.S. president.',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Washington%2C_D.C.', nytTitle: '36 Hours in Washington', nytUrl: nytSearch('Washington') },
+  'San Francisco': { text: 'The California gold rush of 1849 brought rapid growth, making it the largest city on the West Coast at the time.',
+    wikiUrl: 'https://en.wikipedia.org/wiki/San_Francisco', nytTitle: '36 Hours in San Francisco', nytUrl: nytSearch('San Francisco') },
+  Berlin: { text: 'Berlin is home to several universities, such as the Humboldt University of Berlin and the Free University of Berlin.',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Berlin', nytTitle: '36 Hours in Berlin', nytUrl: nytSearch('Berlin') },
+  Stockton: { text: 'Stockton was founded by Charles Maria Weber during the California Gold Rush in 1849.',
+    wikiUrl: 'https://en.wikipedia.org/wiki/Stockton%2C_California', nytTitle: '36 Hours in Stockton', nytUrl: nytSearch('Stockton') },
+};
+
 const scenarios = {};
 for (const [key, [label, now, builtAt = now]] of Object.entries(MOMENTS)) {
-  scenarios[key] = { label, now, status: core.buildStatus({ ...fixture, now: builtAt }) };
+  const status = core.buildStatus({ ...fixture, now: builtAt });
+  if (FACTS[status.today.city]) status.today.fact = FACTS[status.today.city];
+  scenarios[key] = { label, now, status };
 }
 
 const demo = {

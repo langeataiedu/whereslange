@@ -108,9 +108,16 @@ body::after { /* dims the sky in dark mode */
 }
 .place { font: 600 clamp(38px, 11vw, 46px)/1.02 Fraunces, Georgia, serif; letter-spacing: -0.02em; margin: 0 0 8px; }
 .place .star { font-size: .5em; color: var(--star); margin-left: 8px; vertical-align: .45em; }
-/* "At home | Lange's local time: 12:00 pm" fits one line on phones 360px and wider (text shrinks a little) */
-.sub { margin: 0; color: var(--ink-soft); font-size: clamp(14px, 4.1vw, 18px); font-weight: 500; }
-.sub .nowrap { white-space: nowrap; }
+.sub { margin: 0; color: var(--ink-soft); font-size: 18px; font-weight: 500; }
+
+/* Postcard details: sleeping tonight, local time, fun fact */
+.details { display: grid; gap: 7px; margin-top: 12px; padding-top: 12px; border-top: 1.5px dashed var(--rule); }
+.detail { margin: 0; font-size: 16px; line-height: 1.45; color: var(--ink-soft); }
+.detail .label { color: var(--ink); font-weight: 600; }
+.detail .nowrap { white-space: nowrap; }
+.detail .sources { font-size: 14px; }
+.detail .src { color: var(--ink-soft); text-underline-offset: 2px; }
+.details:empty { display: none; }
 .pill {
   display: inline-flex; gap: 8px; margin: 16px 0 0; padding: 9px 15px; border-radius: 999px;
   background: var(--pill); font-weight: 600; font-size: 16.5px; line-height: 1.3;

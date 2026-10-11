@@ -5,13 +5,47 @@
     "region": "DC",
     "tz": "America/New_York",
     "work": true,
-    "transit": { "to": "San Francisco", "departs": "2026-10-07T18:57:00-04:00", "lands": "2026-10-07T21:55:00-07:00" }
+    "sleeping": "At home",
+    "transit": {
+      "to": "San Francisco",
+      "departs": "2026-10-07T18:57:00-04:00",
+      "lands": "2026-10-07T21:55:00-07:00"
+    }
   },
   "homeOn": "2026-10-08",
   "trips": [
-    { "start": "2026-10-15", "end": "2026-10-16", "place": "Chicago, IL", "work": false, "metros": [] },
-    { "start": "2026-10-24", "end": "2026-10-25", "place": "Stockton, CA", "work": false, "metros": ["stockton"] },
-    { "start": "2026-11-10", "end": "2026-11-20", "place": "Germany", "work": true, "metros": [] },
-    { "start": "2026-11-28", "end": "2026-11-28", "place": "Sacramento, CA", "work": true, "metros": ["stockton", "sacramento"] }
+    {
+      "start": "2026-10-15",
+      "end": "2026-10-16",
+      "place": "Chicago, IL",
+      "work": false,
+      "metros": []
+    },
+    {
+      "start": "2026-10-24",
+      "end": "2026-10-25",
+      "place": "Stockton, CA",
+      "work": false,
+      "metros": [
+        "stockton"
+      ]
+    },
+    {
+      "start": "2026-11-10",
+      "end": "2026-11-20",
+      "place": "Germany",
+      "work": true,
+      "metros": []
+    },
+    {
+      "start": "2026-11-28",
+      "end": "2026-11-28",
+      "place": "Sacramento, CA",
+      "work": true,
+      "metros": [
+        "stockton",
+        "sacramento"
+      ]
+    }
   ]
 }

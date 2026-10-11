@@ -134,10 +134,17 @@ window.DEMO = {
           "region": "DC",
           "tz": "America/New_York",
           "work": true,
+          "sleeping": "At home",
           "transit": {
             "to": "San Francisco",
             "departs": "2026-10-07T18:57:00-04:00",
             "lands": "2026-10-07T21:55:00-07:00"
+          },
+          "fact": {
+            "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
+            "nytTitle": "36 Hours in Washington",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
           }
         },
         "homeOn": "2026-10-08",
@@ -188,10 +195,17 @@ window.DEMO = {
           "region": "DC",
           "tz": "America/New_York",
           "work": true,
+          "sleeping": "At home",
           "transit": {
             "to": "San Francisco",
             "departs": "2026-10-07T18:57:00-04:00",
             "lands": "2026-10-07T21:55:00-07:00"
+          },
+          "fact": {
+            "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
+            "nytTitle": "36 Hours in Washington",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
           }
         },
         "homeOn": "2026-10-08",
@@ -241,7 +255,14 @@ window.DEMO = {
           "city": "Washington",
           "region": "DC",
           "tz": "America/New_York",
-          "work": true
+          "work": true,
+          "sleeping": "The Morrow Washington Dc",
+          "fact": {
+            "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
+            "nytTitle": "36 Hours in Washington",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+          }
         },
         "homeOn": "2026-10-08",
         "trips": [
@@ -291,10 +312,17 @@ window.DEMO = {
           "region": "DC",
           "tz": "America/New_York",
           "work": true,
+          "sleeping": "At home",
           "transit": {
             "to": "San Francisco",
             "departs": "2026-10-07T18:57:00-04:00",
             "lands": "2026-10-07T21:55:00-07:00"
+          },
+          "fact": {
+            "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
+            "nytTitle": "36 Hours in Washington",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
           }
         },
         "homeOn": "2026-10-08",
@@ -344,7 +372,14 @@ window.DEMO = {
           "city": "Washington",
           "region": "DC",
           "tz": "America/New_York",
-          "work": true
+          "work": true,
+          "sleeping": "The Morrow Washington Dc",
+          "fact": {
+            "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
+            "nytTitle": "36 Hours in Washington",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+          }
         },
         "homeOn": "2026-10-08",
         "trips": [
@@ -393,7 +428,14 @@ window.DEMO = {
           "city": "Berlin",
           "region": "Germany",
           "tz": "Europe/Berlin",
-          "work": true
+          "work": true,
+          "sleeping": "Hotel Adlon Kempinski",
+          "fact": {
+            "text": "Berlin is home to several universities, such as the Humboldt University of Berlin and the Free University of Berlin.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Berlin",
+            "nytTitle": "36 Hours in Berlin",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Berlin%22"
+          }
         },
         "homeOn": "2026-11-20",
         "trips": [
@@ -419,7 +461,13 @@ window.DEMO = {
           "city": "Stockton",
           "region": "CA",
           "tz": "America/Los_Angeles",
-          "work": false
+          "work": false,
+          "fact": {
+            "text": "Stockton was founded by Charles Maria Weber during the California Gold Rush in 1849.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Stockton%2C_California",
+            "nytTitle": "36 Hours in Stockton",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Stockton%22"
+          }
         },
         "homeOn": "2026-10-26",
         "trips": [
@@ -452,7 +500,14 @@ window.DEMO = {
           "city": "San Francisco",
           "region": "CA",
           "tz": "America/Los_Angeles",
-          "work": false
+          "work": false,
+          "sleeping": "At home",
+          "fact": {
+            "text": "The California gold rush of 1849 brought rapid growth, making it the largest city on the West Coast at the time.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/San_Francisco",
+            "nytTitle": "36 Hours in San Francisco",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20San%20Francisco%22"
+          }
         },
         "homeOn": null,
         "trips": [
@@ -501,7 +556,14 @@ window.DEMO = {
           "city": "Washington",
           "region": "DC",
           "tz": "America/New_York",
-          "work": true
+          "work": true,
+          "sleeping": "The Morrow Washington Dc",
+          "fact": {
+            "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
+            "nytTitle": "36 Hours in Washington",
+            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+          }
         },
         "homeOn": "2026-10-08",
         "trips": [

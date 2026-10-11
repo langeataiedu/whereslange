@@ -15,7 +15,7 @@ const JASON = null; // SF friend: no highlight
 describe('page text', () => {
   it('travel day, before the flight (the SPEC mockup)', () => {
     const vm = F.viewModel(status, opts('2026-10-07T20:12:00Z', MARY));
-    expect(vm.today).toMatchObject({ place: 'Washington, DC', sub: '', localTime: "Lange's local time: 4:12 pm", inAir: false, work: true });
+    expect(vm.today).toMatchObject({ place: 'Washington, DC', sub: '', sleeping: 'At home', localTime: '4:12 pm', inAir: false, work: true });
     expect(vm.pill).toBe('Flying home tonight · lands about 10 pm');
     expect(vm.back).toEqual({ date: 'Thu, Oct 8', rel: 'tomorrow' });
     expect(vm.updated).toEqual({ text: 'Updated 1:12 pm today', stale: false });
@@ -62,10 +62,17 @@ describe('page text', () => {
     expect(F.viewModel(status, opts('2026-10-07T20:12:00Z', MARY)).greeting).toBeNull();
   });
 
-  it('at home: "At home" plus the local time', () => {
+  it('passes through tonight\'s lodging and the fun fact', () => {
+    const fact = { text: 'Stockton was founded during the Gold Rush in 1849.', wikiUrl: 'https://en.wikipedia.org/wiki/Stockton%2C_California',
+      nytTitle: '36 Hours in Stockton', nytUrl: 'https://www.nytimes.com/search?query=x' };
+    const s = { ...status, today: { city: 'Stockton', region: 'CA', tz: 'America/Los_Angeles', work: false, sleeping: "Mom & Dad's house", fact } };
+    expect(F.viewModel(s, opts('2026-10-24T19:00:00Z', MARY)).today).toMatchObject({ sleeping: "Mom & Dad's house", fact });
+  });
+
+  it('at home: the local time', () => {
     const s = { ...status, today: { city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false }, homeOn: null };
     const vm = F.viewModel(s, opts('2026-10-08T19:05:00Z', MARY));
-    expect(vm.today).toMatchObject({ sub: 'At home', localTime: "Lange's local time: 12:05 pm" });
+    expect(vm.today).toMatchObject({ sub: '', localTime: '12:05 pm' });
   });
 
   it('unrecognized place: no local time, no crash', () => {

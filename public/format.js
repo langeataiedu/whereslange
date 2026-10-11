@@ -153,8 +153,10 @@
     return {
       today: {
         place: inAir ? 'In the air' : placeText(today),
-        sub: inAir ? `${placeText(today)} → ${today.transit.to}` : isHome ? 'At home' : '',
-        localTime: lange ? `Lange's local time: ${clock(lange.h, lange.mi)}` : null,
+        sub: inAir ? `${placeText(today)} → ${today.transit.to}` : '',
+        sleeping: today.sleeping || null, // hotel name, "At home", "Overnight flight"
+        localTime: lange ? clock(lange.h, lange.mi) : null,
+        fact: today.fact || null, // { text, wikiUrl, nytTitle, nytUrl }
         inAir,
         isHome,
         mail: mailStamp(today, inAir),
