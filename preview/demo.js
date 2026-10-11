@@ -16,5 +16,6 @@
     home: demo.config.home,
     phone: demo.config.phone,
     highlight: metro ? { metro: viewer.metro, label: metro.label } : null,
+    viewerName: viewer.name,
   }), '../public/assets/');
 })();

@@ -24,6 +24,8 @@
     avatar.id = 'avatar-slot';
     avatar.dataset.state = vm.today.inAir ? 'in-air' : vm.pill ? 'travel-day' : vm.today.isHome ? 'home' : 'away';
     avatar.setAttribute('aria-hidden', 'true');
+    // Speech bubble from the drawing: "Hi Mary!" (pops in after a moment; still for reduced motion)
+    const hello = el('div', 'hello', null, avatar, vm.greeting && el('p', 'bubble', vm.greeting));
 
     // Stamp: Local Mail in the Bay Area / Sacramento / San Joaquin, Air Mail anywhere else or in flight.
     const stamp = el('div', 'stamp');
@@ -57,6 +59,19 @@
       trips.length ? el('ul', 'trips', null, ...trips) : el('p', 'empty', 'Nothing planned for the next two months.'),
       vm.showKey && el('p', 'key', '★ = work trip, so Lange is less free to meet up'));
 
+    // Why this page exists (a note from Lange, before the Text/Call buttons)
+    const rithm = link('rithm', 'The Rithm Project', 'https://www.therithmproject.org/');
+    rithm.target = '_blank';
+    rithm.rel = 'noopener noreferrer';
+    const why = el('section', 'card why', null,
+      el('h2', 'eyebrow', 'Why this page'),
+      el('p', null, "I'm on the road a lot, and I don't want distance to mean drifting apart. So I used AI to build "
+        + "this little window into where I am, and to nudge us toward real time together: a call when I land, "
+        + "dinner when I'm in your town."),
+      el('p', null, "It's inspired by ", rithm, ', which works on building human connection in an age of AI: '
+        + 'using technology to bring people closer, not to stand in for each other.'),
+      el('p', 'signoff', '— Lange'));
+
     const actions = el('nav', 'actions', null, link('btn btn-text', 'Text Lange', vm.textHref), link('btn btn-call', 'Call', vm.callHref));
 
     const updated = el('footer', vm.updated.stale ? 'updated stale' : 'updated', null,
@@ -64,7 +79,7 @@
       vm.updated.stale && el('span', 'stale-note', 'may be out of date'));
 
     document.getElementById('app').replaceChildren(
-      el('main', 'page', null, el('h1', 'title', "Where's Lange?"), avatar, today, back, upcoming, actions, updated));
+      el('main', 'page', null, el('h1', 'title', "Where's Lange?"), hello, today, back, upcoming, why, actions, updated));
   }
 
   /** A message in place of the page (no status yet, or an error). */

@@ -30,6 +30,7 @@
       home: data.home,
       phone: data.phone,
       highlight: data.highlight,
+      viewerName: data.viewer && data.viewer.name,
     }));
   }
 

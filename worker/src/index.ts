@@ -2,7 +2,7 @@
 // status updates from the Apps Script. KV holds the current status only (one key, overwritten).
 //
 //   GET  /             the page (static files in public/)
-//   GET  /api/status   status + this viewer's your-city highlight, phone number and home city
+//   GET  /api/status   status + this viewer's first name and your-city highlight, phone number, home city
 //   POST /api/update   new status from Apps Script (Access service token + shared secret)
 
 import { verifyAccessJwt, type AccessConfig } from './access';
@@ -112,6 +112,7 @@ export default {
       return json({
         status: JSON.parse(raw),
         highlight: metro ? { metro: viewer.metro, label: metro.label } : null,
+        viewer: { name: viewer.name },
         home: config.home,
         phone: config.phone,
       });

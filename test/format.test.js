@@ -56,6 +56,12 @@ describe('page text', () => {
     expect(jason.every((t) => !t.badge && !t.dinnerHref)).toBe(true);
   });
 
+  it('greeting: "Hi" + first name; none without a name', () => {
+    expect(F.viewModel(status, { ...opts('2026-10-07T20:12:00Z', MARY), viewerName: 'Mary' }).greeting).toBe('Hi Mary!');
+    expect(F.viewModel(status, { ...opts('2026-10-07T20:12:00Z', MARY), viewerName: 'Mary Luntao' }).greeting).toBe('Hi Mary!');
+    expect(F.viewModel(status, opts('2026-10-07T20:12:00Z', MARY)).greeting).toBeNull();
+  });
+
   it('at home: "At home" plus the local time', () => {
     const s = { ...status, today: { city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles', work: false }, homeOn: null };
     const vm = F.viewModel(s, opts('2026-10-08T19:05:00Z', MARY));

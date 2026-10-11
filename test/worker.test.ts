@@ -152,6 +152,13 @@ describe('your-city highlight', () => {
     expect(body.status.trips.find((t: { place: string }) => t.place === 'Sacramento, CA').metros).toContain('stockton');
   });
 
+  it("each viewer gets their own name for the greeting (and nobody else's)", async () => {
+    const mom = (await (await asViewer('mom@example.com', '/api/status')).json()) as { viewer: { name: string } };
+    const friend = (await (await asViewer('friend@example.com', '/api/status')).json()) as { viewer: object };
+    expect(mom.viewer).toEqual({ name: 'Mary' });
+    expect(friend.viewer).toEqual({ name: 'Jason' });
+  });
+
   it('an SF friend gets no highlight', async () => {
     const body = (await (await asViewer('friend@example.com', '/api/status')).json()) as { highlight: unknown };
     expect(body.highlight).toBeNull();

@@ -132,7 +132,7 @@
   }
 
   /**
-   * opts: { now, tz (viewer's), home: {city, region}, phone, highlight: {metro, label} | null }
+   * opts: { now, tz (viewer's), home: {city, region}, phone, highlight: {metro, label} | null, viewerName? }
    * highlight is the viewer's your-city metro (the Worker adds it per viewer).
    */
   function viewModel(status, opts) {
@@ -164,6 +164,7 @@
       pill: travelPill(today, now, home),
       back: status.homeOn ? { date: formatDate(status.homeOn), rel: relativeDay(status.homeOn, partsIn(now, opts.tz).date) } : null,
       trips,
+      greeting: opts.viewerName ? `Hi ${String(opts.viewerName).trim().split(/\s+/)[0]}!` : null,
       showKey: today.work || trips.some((t) => t.work),
       updated: freshness(status.updated, now, opts.tz),
       textHref: `sms:${opts.phone}`,
