@@ -142,9 +142,7 @@ window.DEMO = {
           },
           "fact": {
             "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
-            "nytTitle": "36 Hours in Washington",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C."
           }
         },
         "homeOn": "2026-10-08",
@@ -203,9 +201,7 @@ window.DEMO = {
           },
           "fact": {
             "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
-            "nytTitle": "36 Hours in Washington",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C."
           }
         },
         "homeOn": "2026-10-08",
@@ -259,9 +255,7 @@ window.DEMO = {
           "sleeping": "The Morrow Washington Dc",
           "fact": {
             "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
-            "nytTitle": "36 Hours in Washington",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C."
           }
         },
         "homeOn": "2026-10-08",
@@ -320,9 +314,7 @@ window.DEMO = {
           },
           "fact": {
             "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
-            "nytTitle": "36 Hours in Washington",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C."
           }
         },
         "homeOn": "2026-10-08",
@@ -376,9 +368,7 @@ window.DEMO = {
           "sleeping": "The Morrow Washington Dc",
           "fact": {
             "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
-            "nytTitle": "36 Hours in Washington",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C."
           }
         },
         "homeOn": "2026-10-08",
@@ -432,9 +422,7 @@ window.DEMO = {
           "sleeping": "Hotel Adlon Kempinski",
           "fact": {
             "text": "Berlin is home to several universities, such as the Humboldt University of Berlin and the Free University of Berlin.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Berlin",
-            "nytTitle": "36 Hours in Berlin",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Berlin%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Berlin"
           }
         },
         "homeOn": "2026-11-20",
@@ -464,9 +452,7 @@ window.DEMO = {
           "work": false,
           "fact": {
             "text": "Stockton was founded by Charles Maria Weber during the California Gold Rush in 1849.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Stockton%2C_California",
-            "nytTitle": "36 Hours in Stockton",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Stockton%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Stockton%2C_California"
           }
         },
         "homeOn": "2026-10-26",
@@ -504,9 +490,7 @@ window.DEMO = {
           "sleeping": "At home",
           "fact": {
             "text": "The California gold rush of 1849 brought rapid growth, making it the largest city on the West Coast at the time.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/San_Francisco",
-            "nytTitle": "36 Hours in San Francisco",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20San%20Francisco%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/San_Francisco"
           }
         },
         "homeOn": null,
@@ -560,9 +544,7 @@ window.DEMO = {
           "sleeping": "The Morrow Washington Dc",
           "fact": {
             "text": "\"Washington\" is from the name of George Washington, the first U.S. president.",
-            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C.",
-            "nytTitle": "36 Hours in Washington",
-            "nytUrl": "https://www.nytimes.com/search?query=%2236%20Hours%20in%20Washington%22"
+            "wikiUrl": "https://en.wikipedia.org/wiki/Washington%2C_D.C."
           }
         },
         "homeOn": "2026-10-08",

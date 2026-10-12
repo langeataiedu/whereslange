@@ -45,8 +45,7 @@
       vm.today.sleeping && line("Where I'm sleeping tonight:", vm.today.sleeping),
       vm.today.localTime && line("Lange's local time:", el('span', 'nowrap', vm.today.localTime)),
       fact && line('Fun fact about this city:', `${fact.text} `,
-        el('span', 'sources', null, '(', external('src', 'Wikipedia', fact.wikiUrl), ' · ',
-          external('src', `NYT: ${fact.nytTitle}`, fact.nytUrl), ')')));
+        el('span', 'sources', null, '(', external('src', 'Wikipedia', fact.wikiUrl), ')')));
     const today = el('section', 'card today', null,
       el('p', 'eyebrow', away ? 'Today · Greetings from' : 'Today'),
       el('p', 'place', vm.today.place, star(vm.today.work && away)),

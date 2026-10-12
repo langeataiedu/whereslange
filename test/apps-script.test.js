@@ -47,17 +47,11 @@ function fakeCalendar(events, calls) {
 }
 
 /** Loads the Apps Script files into a fresh sandbox with fake Google services. */
-// Fake Wikipedia intro for whichever city is asked about, and a fake NYT search result.
+// Fake Wikipedia intro for whichever city is asked about.
 const WIKI_INTRO = 'Washington is the capital of the United States. "Washington" is from the name of George Washington, the first U.S. president. '
   + 'The population was 689,545 at the 2020 census. The city is home to many national monuments and museums.';
-const NYT_DOC = { web_url: 'https://www.nytimes.com/2024/05/02/travel/things-to-do-washington-dc.html', headline: { main: '36 Hours in Washington, D.C.' }, section_name: 'Travel' };
-// Other results the search might return first: about lots of cities, or not a travel piece.
-const NYT_NOISE = [
-  { web_url: 'https://www.nytimes.com/interactive/2026/06/09/travel/world-cup-2026-city-guide.html', headline: { main: 'World Cup 2026: A City-by-City Guide' }, section_name: 'Travel' },
-  { web_url: 'https://www.nytimes.com/2025/01/01/us/politics/washington-budget.html', headline: { main: 'Washington Budget Talks Stall' }, section_name: 'U.S.' },
-];
 
-function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null, lookupsFail = false, nytDocs = [...NYT_NOISE, NYT_DOC] } = {}) {
+function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null, lookupsFail = false } = {}) {
   const isMarker = (e) => e.title.startsWith('📍');
   const meeting = { title: 'Lunch with Sam', location: 'Some Cafe', start: '2026-10-08T19:00:00Z', end: '2026-10-08T20:00:00Z', allDay: false };
   const calls = { getEvents: [], fetch: [], lookups: [], gmailGets: 0, triggers: [] };
@@ -102,11 +96,9 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
       fetch: (url, opts) => {
         // Like the real UrlFetchApp: characters that must be percent-encoded are an "Invalid argument".
         if (/[|\s"<>{}\\^`]/.test(url)) throw new Error(`Invalid argument: ${url}`);
-        if (/wikipedia\.org|nytimes\.com/.test(url)) {
+        if (/wikipedia\.org/.test(url)) {
           calls.lookups.push(url);
-          const body = /wikipedia/.test(url)
-            ? { query: { pages: [{ title: decodeURIComponent(url.split('titles=')[1]), extract: WIKI_INTRO }] } }
-            : { response: { docs: nytDocs } };
+          const body = { query: { pages: [{ title: decodeURIComponent(url.split('titles=')[1]), extract: WIKI_INTRO }] } };
           return { getResponseCode: () => (lookupsFail ? 500 : 200), getContentText: () => JSON.stringify(body) };
         }
         calls.fetch.push({ url, opts });
@@ -265,35 +257,22 @@ describe('Apps Script wrapper', () => {
     expect(out).toContain('similar property name instead: MARKER_CALENDAR');
   });
 
-  it('adds a Wikipedia fun fact (not the census line) and an NYT search link when there is no NYT key', () => {
+  it('adds a Wikipedia fun fact (not the census line), cached for 6 hours', () => {
     const fact = plain(gas_dry()).today.fact;
     expect([
       '"Washington" is from the name of George Washington, the first U.S. president.',
       'The city is home to many national monuments and museums.',
     ]).toContain(fact.text);
-    expect(fact.nytTitle).toBe('36 Hours in Washington');
-    expect(fact.nytUrl).toMatch(/^https:\/\/www\.nytimes\.com\/search\?query=/);
-  });
-
-  it('with an NYT key, links a recent NYT article; lookups are cached for 6 hours', () => {
-    const gas = appsScript({ props: { ...PROPS, NYT_API_KEY: 'nyt-key' } });
-    const fact = plain(gas.run('dryRun')).today.fact;
-    expect(fact).toMatchObject({ nytTitle: '36 Hours in Washington, D.C.', nytUrl: NYT_DOC.web_url });
-    expect(gas.calls.lookups.find((u) => u.includes('api.nytimes.com'))).toMatch(/begin_date=2021\d{4}/); // last 5 years
+    expect(Object.keys(fact).sort()).toEqual(['text', 'wikiUrl']);
+    const gas = appsScript();
+    gas.run('dryRun');
     const before = gas.calls.lookups.length;
     gas.run('dryRun');
     expect(gas.calls.lookups.length).toBe(before); // second run: from the cache
+    expect(gas.calls.lookups.every((u) => u.startsWith('https://en.wikipedia.org/'))).toBe(true);
   });
 
-  it('NYT: skips articles that only mention the city; falls back to the "36 Hours" search if none is about it', () => {
-    const picked = plain(appsScript({ props: { ...PROPS, NYT_API_KEY: 'k' } }).run('dryRun')).today.fact;
-    expect(picked.nytTitle).toBe('36 Hours in Washington, D.C.'); // not the World Cup guide or the budget story
-    const fallback = plain(appsScript({ props: { ...PROPS, NYT_API_KEY: 'k' }, nytDocs: NYT_NOISE }).run('dryRun')).today.fact;
-    expect(fallback.nytTitle).toBe('36 Hours in Washington');
-    expect(fallback.nytUrl).toMatch(/^https:\/\/www\.nytimes\.com\/search\?query=/);
-  });
-
-  it('if Wikipedia or NYT fails, the update still goes out, just without a fact', () => {
+  it('if Wikipedia fails, the update still goes out, just without a fact', () => {
     const gas = appsScript({ lookupsFail: true });
     gas.run('updateStatus');
     expect(gas.calls.fetch).toHaveLength(1);

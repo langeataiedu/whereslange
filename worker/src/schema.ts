@@ -5,9 +5,8 @@ const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const INSTANT_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/;
 const INSTANT_OFFSET = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}[+-]\d{2}:\d{2}$/;
 const METRO_ID = /^[a-z0-9_-]{1,32}$/;
-// Links on the page may only go to these two sites.
+// The fun fact's link may only go to English Wikipedia.
 const WIKI_URL = /^https:\/\/en\.wikipedia\.org\/wiki\/[^\s"<>]{1,200}$/;
-const NYT_URL = /^https:\/\/www\.nytimes\.com\/[^\s"<>]{1,300}$/;
 
 type Obj = Record<string, unknown>;
 
@@ -40,9 +39,9 @@ export function validateStatus(s: unknown): string | null {
   if ('sleeping' in t && (!str(t.sleeping) || !t.sleeping.trim())) return 'today.sleeping'; // hotel name, "At home"...
   if ('fact' in t) {
     const f = t.fact;
-    if (!isObj(f) || !hasExactly(f, ['text', 'wikiUrl', 'nytTitle', 'nytUrl'])) return 'fact fields';
-    if (!str(f.text, 400) || !str(f.nytTitle, 200) || !str(f.wikiUrl, 300) || !str(f.nytUrl, 400)) return 'fact values';
-    if (!WIKI_URL.test(f.wikiUrl) || !NYT_URL.test(f.nytUrl)) return 'fact links';
+    if (!isObj(f) || !hasExactly(f, ['text', 'wikiUrl'])) return 'fact fields';
+    if (!str(f.text, 400) || !str(f.wikiUrl, 300)) return 'fact values';
+    if (!WIKI_URL.test(f.wikiUrl)) return 'fact link';
   }
   if ('transit' in t) {
     const x = t.transit;

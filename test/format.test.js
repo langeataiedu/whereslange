@@ -63,8 +63,7 @@ describe('page text', () => {
   });
 
   it('passes through tonight\'s lodging and the fun fact', () => {
-    const fact = { text: 'Stockton was founded during the Gold Rush in 1849.', wikiUrl: 'https://en.wikipedia.org/wiki/Stockton%2C_California',
-      nytTitle: '36 Hours in Stockton', nytUrl: 'https://www.nytimes.com/search?query=x' };
+    const fact = { text: 'Stockton was founded during the Gold Rush in 1849.', wikiUrl: 'https://en.wikipedia.org/wiki/Stockton%2C_California' };
     const s = { ...status, today: { city: 'Stockton', region: 'CA', tz: 'America/Los_Angeles', work: false, sleeping: "Mom & Dad's house", fact } };
     expect(F.viewModel(s, opts('2026-10-24T19:00:00Z', MARY)).today).toMatchObject({ sleeping: "Mom & Dad's house", fact });
   });

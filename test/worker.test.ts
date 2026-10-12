@@ -108,19 +108,18 @@ describe('status updates (Apps Script → Worker)', () => {
     expect((await asViewer('mom@example.com', '/api/status')).status).toBe(200);
   });
 
-  const fact = { text: 'Washington is named for George Washington.', wikiUrl: 'https://en.wikipedia.org/wiki/Washington%2C_D.C.',
-    nytTitle: '36 Hours in Washington, D.C.', nytUrl: 'https://www.nytimes.com/2024/05/02/travel/dc.html' };
+  const fact = { text: 'Washington is named for George Washington.', wikiUrl: 'https://en.wikipedia.org/wiki/Washington%2C_D.C.' };
 
-  it("accepts tonight's lodging and a fun fact with Wikipedia and NYT links", async () => {
+  it("accepts tonight's lodging and a fun fact with a Wikipedia link", async () => {
     expect((await postStatus({ ...status, today: { ...status.today, sleeping: 'The Morrow', fact } })).status).toBe(200);
   });
 
-  it('rejects fun-fact links to anywhere but Wikipedia and the NYT', async () => {
+  it('rejects fun-fact links to anywhere but English Wikipedia', async () => {
     for (const bad of [
       { ...fact, wikiUrl: 'https://evil.example.com/wiki/x' },
-      { ...fact, nytUrl: 'javascript:alert(1)' },
-      { ...fact, nytUrl: 'https://www.nytimes.com.evil.example/x' },
-      { ...fact, extra: 'x' },
+      { ...fact, wikiUrl: 'javascript:alert(1)' },
+      { ...fact, wikiUrl: 'https://en.wikipedia.org.evil.example/wiki/x' },
+      { ...fact, nytUrl: 'https://www.nytimes.com/x' }, // no longer part of the fact
     ]) {
       expect((await postStatus({ ...status, today: { ...status.today, fact: bad } })).status).toBe(400);
     }

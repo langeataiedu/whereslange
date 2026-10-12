@@ -156,7 +156,7 @@
         sub: inAir ? `${placeText(today)} → ${today.transit.to}` : '',
         sleeping: today.sleeping || null, // hotel name, "At home", "Overnight flight"
         localTime: lange ? clock(lange.h, lange.mi) : null,
-        fact: today.fact || null, // { text, wikiUrl, nytTitle, nytUrl }
+        fact: today.fact || null, // { text, wikiUrl }
         inAir,
         isHome,
         mail: mailStamp(today, inAir),
