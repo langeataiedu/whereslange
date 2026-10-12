@@ -50,9 +50,14 @@ function fakeCalendar(events, calls) {
 // Fake Wikipedia intro for whichever city is asked about, and a fake NYT search result.
 const WIKI_INTRO = 'Washington is the capital of the United States. "Washington" is from the name of George Washington, the first U.S. president. '
   + 'The population was 689,545 at the 2020 census. The city is home to many national monuments and museums.';
-const NYT_DOC = { web_url: 'https://www.nytimes.com/2024/05/02/travel/things-to-do-washington-dc.html', headline: { main: '36 Hours in Washington, D.C.' } };
+const NYT_DOC = { web_url: 'https://www.nytimes.com/2024/05/02/travel/things-to-do-washington-dc.html', headline: { main: '36 Hours in Washington, D.C.' }, section_name: 'Travel' };
+// Other results the search might return first: about lots of cities, or not a travel piece.
+const NYT_NOISE = [
+  { web_url: 'https://www.nytimes.com/interactive/2026/06/09/travel/world-cup-2026-city-guide.html', headline: { main: 'World Cup 2026: A City-by-City Guide' }, section_name: 'Travel' },
+  { web_url: 'https://www.nytimes.com/2025/01/01/us/politics/washington-budget.html', headline: { main: 'Washington Budget Talks Stall' }, section_name: 'U.S.' },
+];
 
-function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null, lookupsFail = false } = {}) {
+function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200, markerCalendar = true, markers = null, lookupsFail = false, nytDocs = [...NYT_NOISE, NYT_DOC] } = {}) {
   const isMarker = (e) => e.title.startsWith('📍');
   const meeting = { title: 'Lunch with Sam', location: 'Some Cafe', start: '2026-10-08T19:00:00Z', end: '2026-10-08T20:00:00Z', allDay: false };
   const calls = { getEvents: [], fetch: [], lookups: [], gmailGets: 0, triggers: [] };
@@ -101,7 +106,7 @@ function appsScript({ props = PROPS, emails = fixture.emails, responseCode = 200
           calls.lookups.push(url);
           const body = /wikipedia/.test(url)
             ? { query: { pages: [{ title: decodeURIComponent(url.split('titles=')[1]), extract: WIKI_INTRO }] } }
-            : { response: { docs: [NYT_DOC] } };
+            : { response: { docs: nytDocs } };
           return { getResponseCode: () => (lookupsFail ? 500 : 200), getContentText: () => JSON.stringify(body) };
         }
         calls.fetch.push({ url, opts });
@@ -278,6 +283,14 @@ describe('Apps Script wrapper', () => {
     const before = gas.calls.lookups.length;
     gas.run('dryRun');
     expect(gas.calls.lookups.length).toBe(before); // second run: from the cache
+  });
+
+  it('NYT: skips articles that only mention the city; falls back to the "36 Hours" search if none is about it', () => {
+    const picked = plain(appsScript({ props: { ...PROPS, NYT_API_KEY: 'k' } }).run('dryRun')).today.fact;
+    expect(picked.nytTitle).toBe('36 Hours in Washington, D.C.'); // not the World Cup guide or the budget story
+    const fallback = plain(appsScript({ props: { ...PROPS, NYT_API_KEY: 'k' }, nytDocs: NYT_NOISE }).run('dryRun')).today.fact;
+    expect(fallback.nytTitle).toBe('36 Hours in Washington');
+    expect(fallback.nytUrl).toMatch(/^https:\/\/www\.nytimes\.com\/search\?query=/);
   });
 
   it('if Wikipedia or NYT fails, the update still goes out, just without a fact', () => {

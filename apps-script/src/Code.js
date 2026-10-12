@@ -208,10 +208,22 @@ function nytArticle_(today, props, now) {
       + `&api-key=${encodeURIComponent(props.NYT_API_KEY)}`, { muteHttpExceptions: true });
     if (res.getResponseCode() !== 200) continue;
     const docs = (JSON.parse(res.getContentText()).response || {}).docs || [];
-    const doc = docs.find((d) => d.web_url && /^https:\/\/www\.nytimes\.com\//.test(d.web_url) && d.headline && d.headline.main);
-    if (doc) return { title: doc.headline.main, url: doc.web_url };
+    const best = docs.map((d) => ({ d, score: nytScore_(d, where) })).filter((x) => x.score > 0).sort((a, b) => b.score - a.score)[0];
+    if (best) return { title: best.d.headline.main, url: best.d.web_url };
   }
   return search;
+}
+
+/** How well an NYT result is *about* the city: a travel piece naming the city in its headline. 0 = don't use it. */
+function nytScore_(doc, where) {
+  const headline = (doc.headline && doc.headline.main) || '';
+  if (!doc.web_url || !/^https:\/\/www\.nytimes\.com\//.test(doc.web_url) || !headline) return 0;
+  const city = where.toLowerCase();
+  if (!headline.toLowerCase().includes(city)) return 0;
+  const section = String(doc.section_name || (doc.section && doc.section.name) || '').toLowerCase();
+  const thirtySix = /36 hours/i.test(headline);
+  if (!thirtySix && section !== 'travel') return 0; // e.g. a politics story about "Washington"
+  return 1 + (thirtySix ? 4 : 0) + (section === 'travel' ? 2 : 0);
 }
 
 /**
