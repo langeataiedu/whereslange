@@ -9,7 +9,14 @@
       n.append(...children.filter(Boolean));
       return n;
     }
-    const star = (show) => show && el('span', 'star', '★');
+    // Work-trip marker: a briefcase (read aloud as "potential work trip")
+    const star = (show) => { if (!show) return null; const b = el('span', 'star', '\u{1F4BC}'); b.setAttribute('role', 'img'); b.setAttribute('aria-label', 'potential work trip'); return b; };
+    // Text with an icon after it that never wraps onto a line by itself ("Sacramento, CA 💼").
+    const withIcon = (cls, text, icon, tag = 'span') => {
+      if (!icon) return el(tag, cls, text);
+      const i = text.lastIndexOf(' ');
+      return el(tag, cls, text.slice(0, i + 1), el('span', 'nowrap', text.slice(i + 1), icon));
+    };
     const link = (cls, text, href) => { const a = el('a', cls, text); a.href = href; return a; };
 
     // Sky follows Lange's local hour (the viewer's own hour when he's home).
@@ -48,7 +55,7 @@
         el('span', 'sources', null, '(', external('src', 'Wikipedia', fact.wikiUrl), ')')));
     const today = el('section', 'card today', null,
       el('p', 'eyebrow', away ? 'Today · Greetings from' : 'Today'),
-      el('p', 'place', vm.today.place, star(vm.today.work && away)),
+      withIcon('place', vm.today.place, star(vm.today.work && away), 'p'),
       vm.today.sub && el('p', 'sub', vm.today.sub),
       details,
       vm.pill && el('p', 'pill', vm.pill),
@@ -60,13 +67,13 @@
 
     const trips = vm.trips.map((t) => el('li', t.badge ? 'trip mine' : 'trip', null,
       el('span', 'dates', t.dates),
-      el('span', 'where', t.place, star(t.work)),
+      withIcon('where', t.place, star(t.work)),
       t.badge && el('span', 'extra', null, el('span', 'badge', t.badge), link('dinner', "Let's get dinner", t.dinnerHref))));
 
     const upcoming = el('section', 'upcoming', null,
       el('h2', 'eyebrow', 'Coming up'),
       trips.length ? el('ul', 'trips', null, ...trips) : el('p', 'empty', 'Nothing planned for the next two months.'),
-      vm.showKey && el('p', 'key', '★ = potential work trip, so Lange may be less free to meet up'));
+      vm.showKey && el('p', 'key', '\u{1F4BC} = potential work trip, so Lange may be less free to meet up'));
 
     // Why this page exists (a note from Lange, before the Text/Call buttons)
     const rithm = link('rithm', 'The Rithm Project', 'https://www.therithmproject.org/');

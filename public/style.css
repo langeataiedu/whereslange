@@ -107,14 +107,14 @@ body::after { /* dims the sky in dark mode */
   opacity: .55;
 }
 .place { font: 600 clamp(38px, 11vw, 46px)/1.02 Fraunces, Georgia, serif; letter-spacing: -0.02em; margin: 0 0 8px; }
-.place .star { font-size: .5em; color: var(--star); margin-left: 8px; vertical-align: .45em; }
+.place .star { font-size: .45em; margin-left: 8px; vertical-align: .45em; }
 .sub { margin: 0; color: var(--ink-soft); font-size: 18px; font-weight: 500; }
 
 /* Postcard details: sleeping tonight, local time, fun fact */
 .details { display: grid; gap: 7px; margin-top: 12px; padding-top: 12px; border-top: 1.5px dashed var(--rule); }
 .detail { margin: 0; font-size: 16px; line-height: 1.45; color: var(--ink-soft); }
 .detail .label { color: var(--ink); font-weight: 600; }
-.detail .nowrap { white-space: nowrap; }
+.nowrap { white-space: nowrap; }
 .detail .sources { font-size: 14px; }
 .detail .src { color: var(--ink-soft); text-underline-offset: 2px; }
 .details:empty { display: none; }
@@ -149,7 +149,7 @@ body::after { /* dims the sky in dark mode */
 .trip.mine { margin: 0 -12px; padding: 13px 12px; background: var(--mine); border-radius: 6px; }
 .dates { font-weight: 500; font-size: 16.5px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .where { font: 600 21px/1.2 Fraunces, Georgia, serif; }
-.where .star { color: var(--star); margin-left: 6px; font-size: .8em; }
+.where .star { margin-left: 6px; font-size: .75em; }
 .extra { grid-column: 2; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 6px; }
 .badge { color: var(--ink); font-weight: 700; font-size: 14px; border: 1.5px solid currentColor; border-radius: 999px; padding: 2px 10px; }
 .dinner { color: var(--accent); font-weight: 700; font-size: 15.5px; text-underline-offset: 3px; }
