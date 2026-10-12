@@ -145,7 +145,7 @@ function addCityFact_(status, props, now) {
 function cityFact_(today, props, now) {
   if (!today.city && !today.region) return null;
   const cache = CacheService.getScriptCache();
-  const key = `fact:${today.city}|${today.region}`;
+  const key = `fact2:${today.city}|${today.region}`; // bump the version to discard old lookups
   let found = JSON.parse(cache.get(key) || 'null');
   if (!found) {
     found = { wiki: wikipediaSentences_(today), nyt: nytArticle_(today, props, now) };
