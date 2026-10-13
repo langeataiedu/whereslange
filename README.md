@@ -2,6 +2,17 @@
 
 A one-screen, login-protected page for family and close friends: where Lange is today, what's coming up, and when he's back in SF. See [SPEC.md](SPEC.md).
 
+## How this was built
+
+Lange isn't a software engineer. He built this with [Claude Code](https://claude.com/claude-code), working from a written spec.
+
+1. **Spec first.** [SPEC.md](SPEC.md) (Oct 7, 2026) describes what the page shows, where the data comes from, the privacy rules, the architecture, and a build plan for Claude Code to follow. It's the original, with viewer emails swapped for placeholders.
+2. **Build in steps.** Over Oct 9–13, Claude Code followed the spec's build plan: parsing and merge logic with tests, three style templates for Lange to pick from, the Cloudflare Worker, then the Apps Script that feeds it. Lange did the account steps himself (Cloudflare, Access login, Apps Script properties) and typed every secret himself.
+3. **Check, then change.** Each design change was checked in screenshots at phone width before it shipped. Lange's feedback reshaped a lot along the way: the name, the postcard design, a briefcase instead of a star, and dropping features he didn't need.
+4. **Keep a record.** Every change from the spec, and the reason for it, is logged in [Changes from the Spec](https://claude.ai/code/artifact/5f0ea771-6940-4fad-88c9-b4c44ca7019a). The git history shows the code behind each one.
+
+Good places to start reading: the spec, then [apps-script/src/core.js](apps-script/src/core.js) (how calendar events become "where is he today"), then [public/page.js](public/page.js) (how the page is drawn).
+
 ## Status
 
 **v1 is live at https://whereslange.com** (Cloudflare Access email-PIN login; 6 viewers). All four build steps of SPEC §7 are done: parsing and merge logic, the page design ("Window Seat Postcard"), the Cloudflare Worker, and the Apps Script that feeds it every 30 minutes. 95 Vitest tests.
