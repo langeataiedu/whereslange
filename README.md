@@ -6,7 +6,7 @@ A one-screen, login-protected page for family and close friends: where Lange is 
 
 **v1 is live at https://whereslange.com** (Cloudflare Access email-PIN login; 6 viewers). All four build steps of SPEC §7 are done: parsing and merge logic, the page design ("Window Seat Postcard"), the Cloudflare Worker, and the Apps Script that feeds it every 30 minutes. 95 Vitest tests.
 
-**Where changes from SPEC.md are tracked:** the Claude doc ["Where's Lange? — Changes from the Spec"](https://claude.ai/code/artifact/5f0ea771-6940-4fad-88c9-b4c44ca7019a) (every deviation, why, and a checklist of spec sections to update). SPEC.md itself has not been edited, and it's kept out of git because it contains viewer emails. Code history is in git.
+**Where changes from SPEC.md are tracked:** the Claude doc ["Where's Lange? — Changes from the Spec"](https://claude.ai/code/artifact/5f0ea771-6940-4fad-88c9-b4c44ca7019a) (every deviation, why, and a checklist of spec sections to update). SPEC.md is the original spec with viewer emails swapped for placeholders; the unedited original (`SPEC.private.md`) stays local and out of git. Code history is in git.
 
 Naming: everything people see says **Where's Lange?**. The repo/folder and package name stay `wheres-langey`; the Worker is named `wheres-lange`.
 

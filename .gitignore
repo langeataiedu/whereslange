@@ -8,5 +8,6 @@ viewers.json
 .DS_Store
 # Local preview config (points at a session scratch folder)
 .claude/launch.json
-# Contains real viewer emails (SPEC §5: keep them out of git)
-SPEC.md
+# Original spec with real viewer emails (SPEC §5: keep them out of git).
+# SPEC.md is the cleaned copy that is committed.
+SPEC.private.md
