@@ -15,7 +15,7 @@ Good places to start reading: the spec, then [apps-script/src/core.js](apps-scri
 
 ## Status
 
-**v1 is live at https://whereslange.com** (Cloudflare Access email-PIN login; 6 viewers). All four build steps of SPEC §7 are done: parsing and merge logic, the page design ("Window Seat Postcard"), the Cloudflare Worker, and the Apps Script that feeds it every 30 minutes. 95 Vitest tests.
+**v1 is live at https://whereslange.com** (Cloudflare Access email-PIN login; 24 viewers). All four build steps of SPEC §7 are done: parsing and merge logic, the page design ("Window Seat Postcard"), the Cloudflare Worker, and the Apps Script that feeds it every 30 minutes. 96 Vitest tests.
 
 **Where changes from SPEC.md are tracked:** the Claude doc ["Where's Lange? — Changes from the Spec"](https://claude.ai/code/artifact/5f0ea771-6940-4fad-88c9-b4c44ca7019a) (every deviation, why, and a checklist of spec sections to update). SPEC.md is the original spec with viewer emails swapped for placeholders; the unedited original (`SPEC.private.md`) stays local and out of git. Code history is in git.
 
@@ -65,7 +65,7 @@ The design preview (fixture moments side by side): `npm run preview`, then open 
 | Piece | Where |
 |---|---|
 | Site | https://whereslange.com and www (Worker `wheres-lange` on Lange's Cloudflare account, signed in as lange@aiedu.org). The workers.dev address is off. |
-| Login | Cloudflare Zero Trust team `crimson-cake-6b80`, application "Where's Lange App": "Trusted emails" (Allow, one-time PIN, 6 emails) + "Apps Script" (Service Auth, token `apps-script`). AUD and team domain are in `wrangler.jsonc`. |
+| Login | Cloudflare Zero Trust team `crimson-cake-6b80`, application "Where's Lange App": "Trusted emails" (Allow, one-time PIN, 24 emails) + "Apps Script" (Service Auth, token `apps-script`). AUD and team domain are in `wrangler.jsonc`. |
 | Secrets | Worker secrets `VIEWERS` (from local `viewers.json`, gitignored) and `UPDATE_SECRET`. Apps Script properties: `WORKER_URL`, `ACCESS_CLIENT_ID`, `ACCESS_CLIENT_SECRET`, `UPDATE_SECRET`, `MARKER_CALENDAR_ID`. |
 | Code | Private GitHub repo https://github.com/langeataiedu/whereslange (Lange's account, lange@aiedu.org); peers are added as collaborators. |
 | Data | Apps Script project "Where's Lange" on lange@aiedu.org (`.clasp.json`, gitignored), trigger every 30 min. Marker calendar "Where's Langey" (langeluntao@gmail.com, shared to lange@aiedu.org). |

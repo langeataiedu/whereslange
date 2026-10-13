@@ -31,6 +31,21 @@ const LONG_ISLAND = [
   'Westhampton Beach', 'Wyandanch', 'Yaphank',
 ];
 
+// Boroughs, well-known neighborhoods and close-in towns, so a marker like "Manhattan, NY" or
+// "Brookline, MA" still finds its metro. A name that isn't listed just gets no badge.
+const NYC = [
+  'New York', 'New York City', 'NYC', 'Manhattan', 'Brooklyn', 'Queens', 'Bronx', 'Staten Island',
+  'Harlem', 'Upper West Side', 'Upper East Side', 'Midtown', 'Chelsea', 'Greenwich Village', 'West Village',
+  'East Village', 'Lower East Side', 'SoHo', 'Tribeca', 'Financial District', 'Williamsburg', 'Greenpoint',
+  'Bushwick', 'Park Slope', 'Brooklyn Heights', 'DUMBO', 'Astoria', 'Long Island City', 'Flushing',
+  'Jersey City', 'Hoboken', 'Weehawken', 'Newark',
+];
+const BOSTON = [
+  'Boston', 'Cambridge', 'Somerville', 'Brookline', 'Newton', 'Watertown', 'Belmont', 'Arlington', 'Medford',
+  'Malden', 'Everett', 'Chelsea', 'Revere', 'Quincy', 'Waltham', 'Allston', 'Brighton', 'Charlestown',
+  'Dorchester', 'Roxbury', 'Jamaica Plain', 'South Boston', 'East Boston', 'Back Bay',
+];
+
 const CONFIG = {
   home: { city: 'San Francisco', region: 'CA', tz: 'America/Los_Angeles' },
   homeAirports: ['SFO', 'OAK', 'SJC'],
@@ -38,14 +53,14 @@ const CONFIG = {
     stockton: { regions: ['CA'], airports: ['SCK', 'SMF'], cities: ['Stockton', 'Lodi', 'Sacramento'] },
     la: { regions: ['CA'], airports: ['LAX', 'BUR', 'LGB', 'SNA', 'ONT'], cities: ['Los Angeles', 'Santa Monica', 'Pasadena'] },
     sacramento: { regions: ['CA'], airports: ['SMF'], cities: ['Sacramento', 'Davis'] },
-    tucson: { regions: ['AZ'], airports: ['TUS'], cities: ['Tucson'] },
-    boston: { regions: ['MA'], airports: ['BOS'], cities: ['Boston', 'Cambridge', 'Somerville'] },
+    tucson: { regions: ['AZ'], airports: ['TUS'], cities: ['Tucson', 'South Tucson', 'Oro Valley', 'Marana', 'Catalina Foothills'] },
+    boston: { regions: ['MA'], airports: ['BOS'], cities: BOSTON },
     // NYC includes Long Island, so NYC viewers see Long Island trips too.
-    nyc: { regions: ['NY', 'NJ'], airports: ['JFK', 'LGA', 'EWR', 'ISP'], cities: ['New York', 'Brooklyn', 'Jersey City', 'Newark', ...LONG_ISLAND] },
+    nyc: { regions: ['NY', 'NJ'], airports: ['JFK', 'LGA', 'EWR', 'ISP'], cities: [...NYC, ...LONG_ISLAND] },
     longisland: { regions: ['NY'], airports: ['ISP'], cities: LONG_ISLAND },
-    dc: { regions: ['DC', 'VA', 'MD'], airports: ['DCA', 'IAD', 'BWI'], cities: ['Washington', 'Arlington', 'Alexandria'] },
-    burlington: { regions: ['VT'], airports: ['BTV'], cities: ['Burlington'] },
-    seattle: { regions: ['WA'], airports: ['SEA'], cities: ['Seattle', 'Bellevue'] },
+    dc: { regions: ['DC', 'VA', 'MD'], airports: ['DCA', 'IAD', 'BWI'], cities: ['Washington', 'Georgetown', 'Arlington', 'Alexandria', 'Bethesda', 'Chevy Chase', 'Silver Spring', 'Takoma Park', 'Hyattsville', 'College Park', 'Falls Church', 'McLean'] },
+    burlington: { regions: ['VT'], airports: ['BTV'], cities: ['Burlington', 'South Burlington', 'Winooski', 'Essex', 'Essex Junction', 'Colchester', 'Shelburne', 'Williston'] },
+    seattle: { regions: ['WA'], airports: ['SEA'], cities: ['Seattle', 'Bellevue', 'Redmond', 'Kirkland', 'Mercer Island', 'Shoreline', 'Renton', 'Ballard', 'Capitol Hill', 'Fremont'] },
   },
 };
 

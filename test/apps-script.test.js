@@ -249,6 +249,18 @@ describe('Apps Script wrapper', () => {
     expect(trips.find((t) => t.place === 'Lawrence, KS').metros).toEqual([]);
   });
 
+  it('boroughs and close-in towns find their metro, within its states', () => {
+    const day = (title, start, end) => ({ title, start, end, allDay: true });
+    const gas = appsScript({ markers: [
+      day('Manhattan, NY', '2026-10-20', '2026-10-21'), day('Brookline, MA', '2026-10-23', '2026-10-24'),
+      day('Brookline, NH', '2026-10-26', '2026-10-27'),
+    ] });
+    const trips = plain(gas.run('dryRun')).trips;
+    expect(trips.find((t) => t.place === 'Manhattan, NY').metros).toEqual(['nyc']);
+    expect(trips.find((t) => t.place === 'Brookline, MA').metros).toEqual(['boston']);
+    expect(trips.find((t) => t.place === 'Brookline, NH').metros).toEqual([]);
+  });
+
   it('checkMarkers spots a missing or misspelled MARKER_CALENDAR_ID', () => {
     const { MARKER_CALENDAR_ID, ...rest } = PROPS;
     const gas = appsScript({ props: { ...rest, MARKER_CALENDAR: 'x@group.calendar.google.com' } });
