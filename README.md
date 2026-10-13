@@ -56,6 +56,7 @@ The design preview (fixture moments side by side): `npm run preview`, then open 
 | Site | https://whereslange.com and www (Worker `wheres-lange` on Lange's Cloudflare account, signed in as lange@aiedu.org). The workers.dev address is off. |
 | Login | Cloudflare Zero Trust team `crimson-cake-6b80`, application "Where's Lange App": "Trusted emails" (Allow, one-time PIN, 6 emails) + "Apps Script" (Service Auth, token `apps-script`). AUD and team domain are in `wrangler.jsonc`. |
 | Secrets | Worker secrets `VIEWERS` (from local `viewers.json`, gitignored) and `UPDATE_SECRET`. Apps Script properties: `WORKER_URL`, `ACCESS_CLIENT_ID`, `ACCESS_CLIENT_SECRET`, `UPDATE_SECRET`, `MARKER_CALENDAR_ID`. |
+| Code | Private GitHub repo https://github.com/langeataiedu/whereslange (Lange's account, lange@aiedu.org); peers are added as collaborators. |
 | Data | Apps Script project "Where's Lange" on lange@aiedu.org (`.clasp.json`, gitignored), trigger every 30 min. Marker calendar "Where's Langey" (langeluntao@gmail.com, shared to lange@aiedu.org). |
 
 ## Shipping a change
