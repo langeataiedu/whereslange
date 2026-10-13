@@ -4,7 +4,9 @@ A one-screen, login-protected page for family and close friends: where Lange is 
 
 ## Status
 
-Build steps 1–4 of SPEC §7 are done and tested: parsing and merge logic, the page design ("Window Seat Postcard"), the Cloudflare Worker, and the Apps Script that feeds it. Everything runs locally. Nothing is deployed and no cloud resources exist yet. Next: going live (below).
+**v1 is live at https://whereslange.com** (Cloudflare Access email-PIN login; 6 viewers). All four build steps of SPEC §7 are done: parsing and merge logic, the page design ("Window Seat Postcard"), the Cloudflare Worker, and the Apps Script that feeds it every 30 minutes. 95 Vitest tests.
+
+**Where changes from SPEC.md are tracked:** the Claude doc ["Where's Lange? — Changes from the Spec"](https://claude.ai/code/artifact/5f0ea771-6940-4fad-88c9-b4c44ca7019a) (every deviation, why, and a checklist of spec sections to update). SPEC.md itself has not been edited, and it's kept out of git because it contains viewer emails. Code history is in git.
 
 Naming: everything people see says **Where's Lange?**. The repo/folder and package name stay `wheres-langey`; the Worker is named `wheres-lange`.
 
@@ -47,16 +49,26 @@ Locally you're signed in as `DEV_USER_EMAIL` from `.dev.vars`; change it to `fri
 
 The design preview (fixture moments side by side): `npm run preview`, then open http://localhost:8765/preview/.
 
-## Going live (Lange's steps, when ready)
+## Live setup
 
-1. **Cloudflare (aiEDU account):** `npx wrangler login`, then `npx wrangler kv namespace create STATUS` and paste the ID into `wrangler.jsonc`.
-2. **Secrets:** `npx wrangler secret put VIEWERS` (real emails, in the shape of `viewers.example.json`) and `npx wrangler secret put UPDATE_SECRET` (a long random string; the Apps Script gets the same one).
-3. **Deploy:** `npx wrangler deploy`. Until Access is on (next step), every request gets "forbidden": the Worker refuses anyone without a valid Access login.
-4. **Access:** in Zero Trust, add a self-hosted application for the workers.dev hostname with a one-time-PIN policy listing the viewer emails, sessions up to 1 month. Add a service token for the Apps Script and a Service Auth policy for it. Put the team domain (`https://<team>.cloudflareaccess.com`) and the application's AUD tag into `ACCESS_TEAM_DOMAIN` / `ACCESS_AUD` in `wrangler.jsonc`, and deploy again.
-5. **Check:** open the URL from a viewer email (page loads after the PIN) and from an email not on the list (blocked).
-6. **Apps Script (lange@aiedu.org):** `npx clasp login`, then `npx clasp create --type standalone --title "Where's Lange" --rootDir apps-script` (writes `.clasp.json`, kept out of git). `clasp create` may replace `apps-script/appsscript.json` with a default, so restore ours with `git checkout apps-script/appsscript.json`, then `npm run gas:push`.
-7. **Script properties** (Apps Script editor → Project Settings): `WORKER_URL`, `ACCESS_CLIENT_ID`, `ACCESS_CLIENT_SECRET` (the service token from step 4), `UPDATE_SECRET` (same as step 2), and `MARKER_CALENDAR_ID` once the "Where's Langey" calendar exists and is shared with lange@aiedu.org.
-8. **First run:** in the editor, run `dryRun` and approve the permissions it asks for: read-only Calendar, read-only Gmail, connecting to an outside service, and managing its own triggers. Check the logged status looks right, then run `installTrigger` (updates every 30 minutes). Under Triggers, set failure notifications to "immediately" so you hear right away if an update fails.
+| Piece | Where |
+|---|---|
+| Site | https://whereslange.com and www (Worker `wheres-lange` on Lange's Cloudflare account, signed in as lange@aiedu.org). The workers.dev address is off. |
+| Login | Cloudflare Zero Trust team `crimson-cake-6b80`, application "Where's Lange App": "Trusted emails" (Allow, one-time PIN, 6 emails) + "Apps Script" (Service Auth, token `apps-script`). AUD and team domain are in `wrangler.jsonc`. |
+| Secrets | Worker secrets `VIEWERS` (from local `viewers.json`, gitignored) and `UPDATE_SECRET`. Apps Script properties: `WORKER_URL`, `ACCESS_CLIENT_ID`, `ACCESS_CLIENT_SECRET`, `UPDATE_SECRET`, `MARKER_CALENDAR_ID`. |
+| Data | Apps Script project "Where's Lange" on lange@aiedu.org (`.clasp.json`, gitignored), trigger every 30 min. Marker calendar "Where's Langey" (langeluntao@gmail.com, shared to lange@aiedu.org). |
+
+## Shipping a change
+
+```bash
+npm test && npm run typecheck
+npx wrangler deploy        # page (public/) and Worker
+npx clasp push --force     # Apps Script (core.js, Code.js, config.js)
+```
+
+- **Schema changes:** deploy the Worker first if it must accept new fields, then push the Apps Script. Run `updateStatus` in the Apps Script editor to refresh the live status right away.
+- **Viewer list:** edit `viewers.json`, then `npx wrangler secret put VIEWERS < viewers.json`. Add or remove the same email in the Access "Trusted emails" policy.
+- **Gotchas:** `clasp` sign-in expires under aiEDU's Workspace policy (`invalid_rapt` → `npx clasp login`). Listing `routes` in `wrangler.jsonc` turns off workers.dev unless `workers_dev` is set explicitly (it's `false` on purpose now).
 
 ## Animated Lange
 
@@ -73,12 +85,13 @@ Builds a continuous timeline, then reads "today", "home on" and trips off it.
 - **Hotel stays and manual markers** set the place for their dates, trimmed to start when a flight lands nearby (same time zone) and end when any flight leaves. Priority: in the air > manual marker > hotel > flight arrival > home.
 - **Trips** ("Coming up" rows) run from the departure date to the landing date, in Pacific time. Back-to-back travel is split into a row per US state, while everywhere abroad stays together ("Hungary, Germany & Morocco"). A changeover day shows on both rows. "Back in SF" uses the whole stretch away.
 - **Home on**: the trip's landing date if he lands before 6 pm Pacific, otherwise the next day.
-- **Work star**: Navan bookings are work, a `[work]` marker adds the star, and a `[personal]` marker removes it from any trip it overlaps. Markers have no other tags.
+- **Work trips (💼)**: Navan bookings count as work, a `[work]` marker adds the briefcase, and a `[personal]` marker removes it from any trip it overlaps. Markers have no other tags.
+- **Markers**: every event on the "Where's Langey" calendar is a location ("Boise, ID"; the 📍 is optional there, required on the aiEDU calendar). Its Location field, if filled, is "where I'm sleeping tonight".
+- **Sleeping tonight**: wherever the timeline puts him at 3 am local: hotel name, marker Location, "At home" or "Overnight flight".
+- **Fun fact** (Apps Script, not core.js): a sentence from the city's Wikipedia introduction, census lines skipped, rotating daily, cached 6 hours. A failed lookup never blocks the update.
 
-## Open questions / spec deviations
+## Open questions
 
-- `today.transit` has a `departs` field in addition to the spec's `to` and `lands`. The page needs it to tell "flying home tonight" apart from "in the air".
-- Navan's all-day Stay events are treated as end-exclusive (check-in date to check-out date). Check this against a real event; flight times override it either way.
-- Cancellations match on date + route only. Navan's cancellation subjects don't include a confirmation code, so the spec's code match isn't used.
-- No `[private]` tag (dropped from the spec's §4 and §5). Every trip shows its city.
-- Fonts load from Google Fonts. The final page can self-host them.
+- Navan's all-day Stay events are treated as end-exclusive (check-in date to check-out date). Not yet checked against a real event; flight times override it either way.
+- Fonts load from Google Fonts. The page could self-host them.
+- All deviations from SPEC.md: see the changes doc linked under Status.
